@@ -44,8 +44,11 @@ public class MapSector  implements Cloneable{
     }
 
     public MapSector clone() throws CloneNotSupportedException{
-      
-        return (MapSector) super.clone();
+        MapSector cloneSector =  new MapSector();
+        cloneSector.setInitialData(id, offsetRows, offsetCols, rows, cols, cornerCoords, hasNoData);
+        cloneSector.setMaxMinMapValue(maxMapValue, minMapValue);
+        cloneSector.mapDataList.addAll(mapDataList);
+        return cloneSector;
     }
 
     public Mat sectorToRGB(){

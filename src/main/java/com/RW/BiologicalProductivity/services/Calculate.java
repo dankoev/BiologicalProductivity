@@ -14,12 +14,26 @@ class Calculate {
         nu.pattern.OpenCV.loadLocally();
         System.out.println("Load library");
     }
-    public static String pathToMapHInfo ="mapsInfo/mapHData.json";
+    public static String pathToMapHInfo ="mapsInfo/mapHInfo.json";
+    public static String pathToMapCFTInfo ="mapsInfo/mapCFTInfo.json";
+    public static String pathToMapNInfo ="mapsInfo/mapNInfo.json";
+    public static String pathToMapT10Info ="mapsInfo/mapT10Info.json";
+    private static MapInfo mapHinfo;
+    private static MapInfo mapCFTinfo;
+    private static MapInfo mapNinfo;
+    private static MapInfo mapT10info;
+
+    private static MapData mapHData;
+    private static MapData mapNData;
+    private static MapData mapCFTData;
+    private static MapData mapT10Data;
 
     public static void main(String[] args) {
-        MapInfo mapHinfo = readJSON(pathToMapHInfo);
-        MapData mapData = new MapData(mapHinfo.pathToMap, mapHinfo.cornerCoords, mapHinfo.maxMapValue, mapHinfo.minMapValue);
-        MapSector  sector = mapData.getFillSector(26);
+        readMapInfo();
+        createMapsData();
+
+        MapsManipulation manipulation = new MapsManipulation(mapHData, mapCFTData, mapNData, mapT10Data);
+        MapSector sector = manipulation.calculate(26, 4);
 
         HighGui.namedWindow("Input", HighGui.WINDOW_AUTOSIZE);
 
@@ -27,6 +41,18 @@ class Calculate {
         HighGui.imshow("Input", newMat);
         HighGui.waitKey();
         
+    }
+    private static void readMapInfo(){
+        mapHinfo = readJSON(pathToMapHInfo);
+        mapCFTinfo = readJSON(pathToMapCFTInfo);
+        mapNinfo = readJSON(pathToMapNInfo);
+        mapT10info = readJSON(pathToMapT10Info);
+    }
+    private static void createMapsData(){
+        mapHData = new MapData(mapHinfo.pathToMap, mapHinfo.cornerCoords, mapHinfo.maxMapValue, mapHinfo.minMapValue);
+        mapNData = new MapData(mapNinfo.pathToMap, mapNinfo.cornerCoords, mapNinfo.maxMapValue, mapNinfo.minMapValue);
+        mapCFTData = new MapData(mapCFTinfo.pathToMap, mapCFTinfo.cornerCoords, mapCFTinfo.maxMapValue, mapCFTinfo.minMapValue);
+        mapT10Data = new MapData(mapT10info.pathToMap, mapT10info.cornerCoords, mapT10info.maxMapValue, mapT10info.minMapValue);
     }
     public static MapInfo readJSON(String path){
         try {

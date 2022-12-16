@@ -11,9 +11,4 @@ public class MapInfo{
     public double maxMapValue;
     public double minMapValue;
     public double [][] cornerCoords;
-    public MapInfo(){
-        this.cornerCoords = new double[][]{upLeftCoords, upRightCoords,
-                                         lowerRightCoords, lowerLeftCoords};
-    }
-
 }
