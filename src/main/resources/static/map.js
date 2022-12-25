@@ -1,3 +1,4 @@
+/* eslint no-undef:"warn" */
 const mapData = {
   map: null,
   zoom: 5,

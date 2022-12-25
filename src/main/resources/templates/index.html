@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
     <title>Карта</title>
-    <link rel="stylesheet" type="text/css" href="https://yastatic.net/bootstrap/3.3.4/css/bootstrap.min.css">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script src="https://api-maps.yandex.ru/2.1/?apikey=00edbb4c-85c6-4375-8249-f0baae6a12c2&lang=ru_RU&coordorder=longlat" type="text/javascript"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
@@ -10,12 +9,26 @@
     <link href="/styles.css" rel="stylesheet" />
 <body>
     <div class="container">
-        <h1>Яндекс карты</h1>
-        <div id="map"></div>
-        <div>
-            <label> Координаты метки: </label> <br>
-             <textarea id="placemarkCoords"> </textarea>
+        <div class="box-col">
+            <h1>Яндекс карты</h1>
+
+            <div>
+                <p id="message"></p>
+            </div>
+            <div class="box-row">
+                <div class="dox-col">
+                    <div id="map"></div>
+                    <div>
+                        <label> Координаты метки: </label> <br>
+                        <textarea id="placemarkCoords"> </textarea>
+                    </div>
+                </div>
+                <div class="dox-col">
+                    <h3>Sector information</h3>
+                </div>
+            </div>
         </div>
+        
     </div>
     
     
