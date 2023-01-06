@@ -51,23 +51,41 @@ public class MapSector  implements Cloneable{
         return cloneSector;
     }
 
-    public Mat sectorToRGB(){
-        double[] RGBWhite = {255,2555,255};
-        Scalar initialRGB = new Scalar(RGBWhite);
-        Mat newImg = new Mat(this.rows, this.cols, CvType.CV_8UC3, initialRGB);
-        double[] valueRGB;
-        Mat palitraHSV = palitraHSV(kPalitra);
-        int lenPalitraHSV = palitraHSV.cols();
-        for (MapElementData el : this.mapDataList){
-            if (!el.isNoData) {
-                valueRGB = palitraHSV.get(0,(int)(lenPalitraHSV * (el.value - minMapValue) / maxMapValue));
-                newImg.put(el.x- this.offsetRows, el.y-this.offsetCols, valueRGB);
+    public Mat toRGB(){
+        try {
+            double[] RGBWhite = {255,2555,255};
+            Scalar initialRGB = new Scalar(RGBWhite);
+            Mat newImg = new Mat(this.rows, this.cols, CvType.CV_8UC3, initialRGB);
+            double[] valueRGB;
+            Mat palitraHSV = palitraHSV(kPalitra);
+            int lenPalitraHSV = palitraHSV.cols();
+            for (MapElementData el : this.mapDataList){
+                if (!el.isNoData) {
+                    if (el.value > maxMapValue){
+                        valueRGB = palitraHSV.get(0,lenPalitraHSV-1);
+                    }
+                    else if(el.value < minMapValue){
+                        valueRGB = palitraHSV.get(0,0);
+                    }
+                    else{
+                        valueRGB = palitraHSV.get(0,(int)((lenPalitraHSV-1) * (el.value - minMapValue)/(maxMapValue - minMapValue)));
+                    } 
+                    if (valueRGB != null)
+                        newImg.put(el.x- this.offsetRows, el.y-this.offsetCols, valueRGB);
+                    else
+                        System.out.println("stop");
+                }
+                else {
+                    newImg.put(el.x- this.offsetRows, el.y-this.offsetCols, RGBWhite);
+                }
             }
-            else {
-                newImg.put(el.x- this.offsetRows, el.y-this.offsetCols, RGBWhite);
-            }
+            return newImg;
+        } catch (UnsupportedOperationException e) {
+            System.out.println(e);
+            System.out.println("Error of map generation!! ");
+            return null;
         }
-        return newImg;
+        
     }
     public static Mat palitraHSV(double c){
         double H = 0;

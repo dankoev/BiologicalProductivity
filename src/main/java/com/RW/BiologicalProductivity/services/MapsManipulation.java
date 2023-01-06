@@ -24,6 +24,7 @@ public class MapsManipulation {
         this.mapT = mapT;
     }
     private void  getSectorsById(int sectorId){
+        initialSectors.clear();
         sectorH = this.mapH.getFillSector(sectorId);
         sectorCFT = this.mapCFT.getFillSector(sectorId);
         sectorN = this.mapN.getFillSector(sectorId);
