@@ -1,28 +1,52 @@
 package com.RW.BiologicalProductivity.controllers;
 
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.RW.BiologicalProductivity.services.ServicesAPI;
 
 
-@RestController
+@Controller
 public class SectorController {
+
     @GetMapping("/getHeatMap")
-    public void getHeatMap() {
+    public ResponseEntity<byte[]> getHeatMap() throws IOException {
         Instant start = Instant.now();
 
-        ServicesAPI.getPathToHeatMap(26, 8);
+        String heatMapPath = ServicesAPI.getPathToHeatMap(26, 8);
+        String absolPath = new File(heatMapPath).getAbsolutePath();
+        
+        byte[] imageBytes = Files.readAllBytes(Paths.get(absolPath));
+        String hello = "hello";
+
+        // Set the Content-Type header
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        // headers.setCacheControl(CacheControl.maxAge(1, TimeUnit.HOURS).mustRevalidate());
+        // headers.setExpires(Instant.now().plus(1, ChronoUnit.HOURS));
+
+        // Return the image as a ResponseEntity
 
         Instant finish = Instant.now();
         long elapsed = Duration.between(start, finish).toMillis();
         System.out.println("Прошло времени, мс: " + elapsed);
+        return new ResponseEntity<>(imageBytes,headers, HttpStatus.OK);
         
-        
-    }
-    
+    }    
 }

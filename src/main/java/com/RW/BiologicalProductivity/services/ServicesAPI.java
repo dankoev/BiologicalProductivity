@@ -11,7 +11,7 @@ public class ServicesAPI extends Calculate {
     }
     public static String getPathToHeatMap(int idSectors, int typeMap ){
         Mat heatMap = getHeatMap(idSectors, typeMap);
-        String pathToFolder = "uploads/heatMaps/";
+        String pathToFolder = "./uploads/heatMaps/";
         String pathToHeatMap = pathToFolder + "sector.jpeg";
         Imgcodecs.imwrite(pathToHeatMap, heatMap);
         System.out.println("******Файл Загружен*****");
