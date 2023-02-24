@@ -28,7 +28,7 @@ public class SectorController {
     @GetMapping("/getHeatMap")
     public ResponseEntity<byte[]> getHeatMap() throws IOException {
         Instant start = Instant.now();
-
+        
         // byte[] imageBytes = ServicesAPI.getHeatMapAsBytes(26, 8);
         byte[] imageBytes = ServicesAPI.getHeatMapAsBytes(26, 8,"\\uploads");
         HttpHeaders headers = new HttpHeaders();
