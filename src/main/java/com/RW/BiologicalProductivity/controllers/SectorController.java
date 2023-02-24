@@ -29,9 +29,8 @@ public class SectorController {
     public ResponseEntity<byte[]> getHeatMap() throws IOException {
         Instant start = Instant.now();
 
-        String heatMapPath = ServicesAPI.getPathToHeatMap(26, 8);
-        String absolPath = new File(heatMapPath).getAbsolutePath();
-        byte[] imageBytes = Files.readAllBytes(Paths.get(absolPath));
+        // byte[] imageBytes = ServicesAPI.getHeatMapAsBytes(26, 8);
+        byte[] imageBytes = ServicesAPI.getHeatMapAsBytes(26, 8,"\\uploads");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_JPEG);
 

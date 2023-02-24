@@ -9,9 +9,11 @@ import org.opencv.core.Scalar;
 
 public class MapSector  implements Cloneable{
     private final static double noDataValue = -99999.0;
+    private static Mat palitraHSV = null;
     private static final double kPalitra = 1.5;
     private static final int rowPalitra = 30;
     private static final int colskPalitra = 360;
+    
 
     public int id;
     public int offsetRows;
@@ -51,13 +53,14 @@ public class MapSector  implements Cloneable{
         return cloneSector;
     }
 
-    public Mat toRGB(){
+    public Mat toHeatMap(){
         try {
             double[] RGBWhite = {255,2555,255};
             Scalar initialRGB = new Scalar(RGBWhite);
             Mat newImg = new Mat(this.rows, this.cols, CvType.CV_8UC3, initialRGB);
             double[] valueRGB;
-            Mat palitraHSV = palitraHSV(kPalitra);
+            if (palitraHSV == null)
+                palitraHSV = createPalitraHSV(kPalitra);
             int lenPalitraHSV = palitraHSV.cols();
             for (MapElementData el : this.mapDataList){
                 if (!el.isNoData) {
@@ -87,7 +90,7 @@ public class MapSector  implements Cloneable{
         }
         
     }
-    public static Mat palitraHSV(double c){
+    public static Mat createPalitraHSV(double c){
         double H = 0;
         double S = 0;
         double V = 0;
