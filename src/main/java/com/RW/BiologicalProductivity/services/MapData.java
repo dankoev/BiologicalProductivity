@@ -1,5 +1,6 @@
 package com.RW.BiologicalProductivity.services;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.opencv.core.CvType;
@@ -19,6 +20,7 @@ public class MapData {
 
     public double maxMapValue = 0;
     public double minMapValue = 0;
+    private GdalService gdalSer;
 
     public double[] upLeftCoords;
     public double[] lowerLeftCoords;
@@ -46,19 +48,14 @@ public class MapData {
         this.minMapValue = minMapValue;
         countSectors();
     }
-    public  Mat getGrayMap(double minMapValue,double maxMapValue){
-        Mat newImg = new Mat(imgRows, imgCols, CvType.CV_8U);
-        int newvValue;
-        double currValue;
-        for (int x = 0; x < imgRows; x++) {
-            for (int y = 0; y < imgCols; y++) {
-                currValue = img.get(x,y)[0];
-                newvValue = (int)(255 * (currValue - minMapValue) / maxMapValue);
-                newImg.put(x, y , newvValue);
-            }
-            
-        }
-        return newImg;
+    public MapData(String pathToMap) throws IOException {
+        this.img = Imgcodecs.imread(pathToMap, typeMapCoding);
+        this.imgCols = img.cols();
+        this.imgRows = img.rows();
+        GdalService gdalSer= new GdalService(pathToMap);
+        double[] cor = gdalSer.getTransform();
+        
+        countSectors();
     }
     private double[][] calcCornWordsCoord(int offsetRows, int offsetCols, int rows, int cols){
         double[][] cornerCoords = new double[4][2];
@@ -91,6 +88,7 @@ public class MapData {
             }
         }
     }
+    
     private boolean detectNoDataSectors(int offsetRows, int offsetCols, int rows, int cols){
         for (int x = offsetRows; x < offsetRows + rows; x++){
 
@@ -119,7 +117,7 @@ public class MapData {
            System.out.println("Ошибка клонирования сектора");
         }
 
-        if (sector.hasNoData|| !sector.mapDataList.isEmpty())
+        if (sector.hasNoData || !sector.mapDataList.isEmpty())//????????
             return sector;
         double value;
         double[] wordCoordinate;
@@ -134,17 +132,7 @@ public class MapData {
         }
         return sector;
     }
-    private double[] pixelToWord(int x, int y){
-        double rx = (double)x / imgRows;
-        double ry = (double)y / imgCols;
-
-        double[] rightSide = this.lerp(upRightCoords, lowerRightCoords, rx);
-        double[] leftSide  = this.lerp(upLeftCoords, lowerLeftCoords, rx);
-        
-        return lerp( leftSide, rightSide, ry );
-    }
-    private double[] lerp( double[]p1,double[]p2,double t){
-        return new double[]{ ((1-t)*p1[0]) + (t*p2[0]),
-                ((1-t)*p1[1]) + (t*p2[1])};
+    private double[] pixelToWord(int row, int col){
+        return gdalSer.getGeoCoordByPixels(row,col);
     }
 }
