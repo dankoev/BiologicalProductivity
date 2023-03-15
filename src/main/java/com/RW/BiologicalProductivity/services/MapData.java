@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
 import org.opencv.imgcodecs.Imgcodecs;
 
 
@@ -14,7 +15,7 @@ public class MapData {
                                              Imgcodecs.IMREAD_ANYDEPTH |
                                              Imgcodecs.IMREAD_LOAD_GDAL;
     
-    private Mat img;
+    private final Mat img;
     private int imgCols = 0;
     private int imgRows = 0;
 
@@ -27,7 +28,8 @@ public class MapData {
     public double[] upRightCoords;
     public double[] lowerRightCoords;
     
-    public int nSectors = 64;
+    private int rowSplit = 8;
+    private int colSplit = 8;
     public List<MapSector> sectors = new ArrayList<>();
 
 
@@ -52,9 +54,23 @@ public class MapData {
         this.img = Imgcodecs.imread(pathToMap, typeMapCoding);
         this.imgCols = img.cols();
         this.imgRows = img.rows();
-        GdalService gdalSer= new GdalService(pathToMap);
-        double[] cor = gdalSer.getTransform();
-        
+        this.gdalSer= new GdalService(pathToMap);
+        this.maxMapValue = gdalSer.getMinMax(1)[1];;
+        this.minMapValue = gdalSer.getMinMax(1)[0];;
+        countSectors();
+    }
+    public MapData(String pathToMap,
+                   int rowSplit,
+                   int colSplit) throws IOException {
+        this.img = Imgcodecs.imread(pathToMap, typeMapCoding);
+        this.colSplit = colSplit;
+        this.rowSplit = rowSplit;
+        this.imgCols = img.cols();
+        this.imgRows = img.rows();
+        this.gdalSer= new GdalService(pathToMap);
+//        double[] cor = gdalSer.getTransform();
+        this.maxMapValue = gdalSer.getMinMax(1)[1];;
+        this.minMapValue = gdalSer.getMinMax(1)[0];;
         countSectors();
     }
     private double[][] calcCornWordsCoord(int offsetRows, int offsetCols, int rows, int cols){
@@ -71,16 +87,23 @@ public class MapData {
         boolean hasNoData;
         int offsetRows,offsetCols,cols,rows;
         double[][] cornerCoords;
-        for( int i = 0; i < Math.sqrt(nSectors); i++) {
-            for (int j = 0; j < Math.sqrt(nSectors); j++) {
+        
+        int rowRemainder = imgRows % rowSplit;
+        int colRemainder = imgCols % colSplit;
+        int RowSize = (int)(Math.floor(imgRows/rowSplit));
+        int ColSize = (int) (Math.floor(imgCols/colSplit));
+        
+        for( int i = 0; i < rowSplit; i++) {
+            for (int j = 0; j < colSplit; j++) {
                 MapSector sector = new MapSector();
-                offsetRows = (int)(imgRows / Math.sqrt(nSectors) * i);
-                offsetCols = (int) (imgCols / Math.sqrt(nSectors) * j);
-                cols = (int) (imgCols / Math.sqrt(nSectors) * (j+1)) - offsetCols;
-                rows = (int)(imgRows / Math.sqrt(nSectors) * (i+1)) - offsetRows;
+                offsetRows = i < rowRemainder ? (RowSize+1) * i: RowSize * i;
+                rows = i < rowRemainder ? RowSize+1: RowSize;
+                
+                offsetCols = j < colRemainder ? (ColSize+1) * j: ColSize * j;
+                cols = j < colRemainder ? ColSize+1: ColSize;
+                
                 cornerCoords = calcCornWordsCoord(offsetRows,offsetCols,rows,cols);
                 hasNoData = detectNoDataSectors(offsetRows,offsetCols,rows,cols);
-
                 sector.setInitialData(id, offsetRows, offsetCols, rows, cols, cornerCoords,hasNoData);
                 sector.setMaxMinMapValue(maxMapValue, minMapValue);
                 this.sectors.add(sector);
@@ -88,7 +111,6 @@ public class MapData {
             }
         }
     }
-    
     private boolean detectNoDataSectors(int offsetRows, int offsetCols, int rows, int cols){
         for (int x = offsetRows; x < offsetRows + rows; x++){
 
@@ -117,19 +139,11 @@ public class MapData {
            System.out.println("Ошибка клонирования сектора");
         }
 
-        if (sector.hasNoData || !sector.mapDataList.isEmpty())//????????
+        if (sector.hasNoData)//????????
             return sector;
-        double value;
-        double[] wordCoordinate;
-        for (int x = sector.offsetRows; x < sector.offsetRows + sector.rows; x++){
-            for ( int y = sector.offsetCols; y < sector.offsetCols + sector.cols; y++) {
-                value = img.get(x,y)[0];
-                wordCoordinate = pixelToWord(x,y);
-                MapElementData mapData =  new MapElementData();
-                mapData.setData(value,x,y,wordCoordinate);
-                sector.mapDataList.add(mapData);
-            }
-        }
+        Rect rect = new Rect(sector.offsetCols,sector.offsetRows,
+                sector.cols,sector.rows);
+        sector.sertorData = img.submat(rect);
         return sector;
     }
     private double[] pixelToWord(int row, int col){

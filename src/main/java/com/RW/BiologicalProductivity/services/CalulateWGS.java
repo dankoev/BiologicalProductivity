@@ -5,6 +5,7 @@ import org.gdal.gdal.Dataset;
 import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconstConstants;
 import org.opencv.core.Mat;
+import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.IOException;
@@ -21,9 +22,12 @@ public class CalulateWGS {
     public static void main(String[] args) throws IOException {
         Instant start = Instant.now();
         
-        String pathToMap = "mapsInfo/wgs/CFT_WGS.tif";
+        String pathToMap = "mapsInfo/wgs/H_WGS.tif";
         MapData mapData = new MapData(pathToMap);
-    
+        Mat newMat = mapData.getFillSector(36).toHeatMap();
+//        Imgcodecs.imwrite("uploads/sector" + 15 + ".jpeg", newMat);
+//        HighGui.imshow("trt",newMat);
+//        HighGui.waitKey();
         Instant finish = Instant.now();
         long elapsed = Duration.between(start, finish).toMillis();
         System.out.println("Прошло времени, мс: " + elapsed);

@@ -52,7 +52,7 @@ public class ServicesAPI extends Calculate {
         createMapsData();
         MapsManipulation manipulation = new MapsManipulation(mapHData, mapCFTData, mapNData, mapT10Data);
         if (typeMap > 4){
-            calculatedSector = manipulation.calculate(idSectors, typeMap - 4);
+//            calculatedSector = manipulation.calculate(idSectors, typeMap - 4);
         }
         else{
             calculatedSector = manipulation.getSectorById(idSectors, typeMap);

@@ -74,8 +74,8 @@ class Calculate {
             }      
         };
         for (int i = 0; i < 64; i++) {
-            Mat newMat = manipulation.calculate(i,typeMap).toHeatMap();
-            writeSectorToPath(newMat,i,path);
+//            Mat newMat = manipulation.calculate(i,typeMap).toHeatMap();
+//            writeSectorToPath(newMat,i,path);
         } 
         System.out.println("Записаны сектора по пути " + path);
     }

@@ -26,7 +26,7 @@ public class MapSector  implements Cloneable{
     public double maxMapValue = noDataValue;
     public double minMapValue= noDataValue;
 
-    public List<MapElementData> mapDataList = new ArrayList<>();
+    public Mat sertorData = new Mat();
 
     public void setInitialData (int id,int offsetRows,int offsetCols,
                             int rows,int cols,double[][] cornerCoords,
@@ -49,7 +49,7 @@ public class MapSector  implements Cloneable{
         MapSector cloneSector =  new MapSector();
         cloneSector.setInitialData(id, offsetRows, offsetCols, rows, cols, cornerCoords, hasNoData);
         cloneSector.setMaxMinMapValue(maxMapValue, minMapValue);
-        cloneSector.mapDataList.addAll(mapDataList);
+        cloneSector.sertorData = sertorData.clone();
         return cloneSector;
     }
 
@@ -61,25 +61,28 @@ public class MapSector  implements Cloneable{
             double[] valueRGB;
             if (palitraHSV == null)
                 palitraHSV = createPalitraHSV(kPalitra);
+            
             int lenPalitraHSV = palitraHSV.cols();
-            for (MapElementData el : this.mapDataList){
-                if (!el.isNoData) {
-                    if (el.value > maxMapValue){
+            for (int x = 0; x < sertorData.rows(); x++){
+                for ( int y = 0; y < sertorData.cols(); y++){
+                    double currentValue = sertorData.get(x,y)[0];
+                    if (currentValue == noDataValue) {
+                        newImg.put(x, y, RGBWhite);
+                        continue;
+                    }
+                    if (currentValue > maxMapValue){
                         valueRGB = palitraHSV.get(0,lenPalitraHSV-1);
                     }
-                    else if(el.value < minMapValue){
+                    else if(currentValue < minMapValue){
                         valueRGB = palitraHSV.get(0,0);
                     }
                     else{
-                        valueRGB = palitraHSV.get(0,(int)((lenPalitraHSV-1) * (el.value - minMapValue)/(maxMapValue - minMapValue)));
-                    } 
+                        valueRGB = palitraHSV.get(0,(int)((lenPalitraHSV-1) * (currentValue - minMapValue)/(maxMapValue - minMapValue)));
+                    }
                     if (valueRGB != null)
-                        newImg.put(el.x- this.offsetRows, el.y-this.offsetCols, valueRGB);
+                        newImg.put(x, y, valueRGB);
                     else
                         System.out.println("stop");
-                }
-                else {
-                    newImg.put(el.x- this.offsetRows, el.y-this.offsetCols, RGBWhite);
                 }
             }
             return newImg;
