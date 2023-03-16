@@ -7,6 +7,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.Instant;
 
 public class ServicesAPI extends Calculate {
 
@@ -48,8 +50,15 @@ public class ServicesAPI extends Calculate {
    
     
     protected static MapSector getSector(int idSectors, int typeMap ) {
+        Instant start = Instant.now();
+        
         readMapInfo();
+        
+        Instant finish = Instant.now();
         createMapsData();
+        long elapsed = Duration.between(start, finish).toMillis();
+        System.out.println("Чтение JSON заняло, мс: " + elapsed);
+        
         MapsManipulation manipulation = new MapsManipulation(mapHData, mapCFTData, mapNData, mapT10Data);
         if (typeMap > 4){
             calculatedSector = manipulation.calculate(idSectors, typeMap - 4);

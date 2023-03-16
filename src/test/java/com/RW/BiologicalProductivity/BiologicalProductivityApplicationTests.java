@@ -5,6 +5,7 @@ import com.RW.BiologicalProductivity.services.MapElementData;
 import com.RW.BiologicalProductivity.services.ServicesAPI;
 import org.junit.jupiter.api.Test;
 import org.opencv.core.Mat;
+import org.opencv.highgui.HighGui;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Duration;
@@ -32,6 +33,17 @@ class BiologicalProductivityApplicationTests extends ServicesAPI {
 			mapElementData.setData(value,sectorData.get(i).x,sectorData.get(i).y);
 			result.add(mapElementData);
 		}
+		Instant finish = Instant.now();
+		
+		long elapsed = Duration.between(start, finish).toMillis();
+		System.out.println("Прошло времени, мс: " + elapsed);
+	}
+	@Test
+	void test1(){
+		Mat newM;
+		Instant start = Instant.now();
+		newM = ServicesAPI.getHeatMap(28,8);
+		HighGui.imshow("sdfs",newM);
 		Instant finish = Instant.now();
 		
 		long elapsed = Duration.between(start, finish).toMillis();
