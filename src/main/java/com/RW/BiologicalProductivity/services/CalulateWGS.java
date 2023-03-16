@@ -1,6 +1,8 @@
 package com.RW.BiologicalProductivity.services;
 
 
+import com.RW.BiologicalProductivity.services.enums.TypeMap;
+import com.RW.BiologicalProductivity.services.interfaces.MapsManipulation;
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconstConstants;
@@ -22,11 +24,15 @@ public class CalulateWGS {
     public static void main(String[] args) throws IOException {
         Instant start = Instant.now();
         
-        String pathToMap = "mapsInfo/wgs/H_WGS.tif";
-        MapData mapData = new MapData(pathToMap);
-        Mat newMat = mapData.getFillSector(36).toHeatMap();
-//        Imgcodecs.imwrite("uploads/sector" + 15 + ".jpeg", newMat);
-//        HighGui.imshow("trt",newMat);
+        String pathToMap = "mapsInfo/H_UTM.tif";
+//        MapData mapData = new MapData(pathToMap,8,8);
+//        Mat newMat = mapData.getFillSector(44).toHeatMap();
+//        HighGui.imshow("dsas",newMat);
+//        HighGui.waitKey();
+        MapsManipulation mapsManipulation = new MapsManipulationImpl("mapsInfo/H_UTM.tif","mapsInfo/CFT_UTM.tif",
+                "mapsInfo/N_UTM.tif","mapsInfo/T10_UTM.tif",8,8);
+        Mat newMat = mapsManipulation.getSectorById(28, TypeMap.ZM).toHeatMap();
+        HighGui.imshow("dsas",newMat);
 //        HighGui.waitKey();
         Instant finish = Instant.now();
         long elapsed = Duration.between(start, finish).toMillis();

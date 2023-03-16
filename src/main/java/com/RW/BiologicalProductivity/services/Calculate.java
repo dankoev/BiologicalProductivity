@@ -3,8 +3,8 @@ package com.RW.BiologicalProductivity.services;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
+import com.RW.BiologicalProductivity.services.enums.TypeMap;
 import org.opencv.core.Mat;
-import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import com.RW.BiologicalProductivity.services.models.MapInfo;
@@ -44,13 +44,13 @@ class Calculate {
     public static void main(String[] args) {
         readMapInfo();
         createMapsData();
-        MapsManipulation manipulation = new MapsManipulation(mapHData, mapCFTData, mapNData, mapT10Data);
-        calculateAllInitialMap(manipulation, 1);
-
-        calculateAllResultMap(manipulation, 1);
-        calculateAllResultMap(manipulation, 2);
-        // calculateAllResultMap(manipulation, 3);
-        calculateAllResultMap(manipulation, 4);
+//        MapsManipulationImpl manipulation = new MapsManipulationImpl(mapHData, mapCFTData, mapNData, mapT10Data);
+//        calculateAllInitialMap(manipulation, 1);
+//
+//        calculateAllResultMap(manipulation, 1);
+//        calculateAllResultMap(manipulation, 2);
+//        // calculateAllResultMap(manipulation, 3);
+//        calculateAllResultMap(manipulation, 4);
 
     }
     private static void writeSectorToPath(Mat sector, int index, String path){
@@ -58,7 +58,7 @@ class Calculate {
         // System.out.println("Сектор " + index +" записан по пути:" + path);
     }
 
-    private static void calculateAllResultMap(MapsManipulation manipulation, int typeMap){
+    private static void calculateAllResultMap(MapsManipulationImpl manipulation, int typeMap){
         String path = switch (typeMap) {
             case 1 ->
                 pathToZmSectors;
@@ -79,7 +79,7 @@ class Calculate {
         } 
         System.out.println("Записаны сектора по пути " + path);
     }
-    private static void calculateAllInitialMap(MapsManipulation manip, int typeMap){
+    private static void calculateAllInitialMap(MapsManipulationImpl manip, int typeMap){
         String path = switch (typeMap) {
             case 1 ->
                 pathToHSectors;
@@ -95,8 +95,8 @@ class Calculate {
             }      
         };
         for (int i = 0; i < 64; i++) {
-            Mat newMat = manip.getSectorById(i,typeMap).toHeatMap();
-            writeSectorToPath(newMat,i,path);
+//            Mat newMat = manip.getSectorById(i, TypeMap.T).toHeatMap();
+//            writeSectorToPath(newMat,i,path);
         } 
         System.out.println("Записаны сектора по пути " + path);
     }

@@ -3,9 +3,7 @@ package com.RW.BiologicalProductivity.services;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 
-import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ServicesAPI extends Calculate {
@@ -50,12 +48,12 @@ public class ServicesAPI extends Calculate {
     private static MapSector getSector(int idSectors, int typeMap ) {
         readMapInfo();
         createMapsData();
-        MapsManipulation manipulation = new MapsManipulation(mapHData, mapCFTData, mapNData, mapT10Data);
+//        MapsManipulationImpl manipulation = new MapsManipulationImpl(mapHData, mapCFTData, mapNData, mapT10Data);
         if (typeMap > 4){
 //            calculatedSector = manipulation.calculate(idSectors, typeMap - 4);
         }
         else{
-            calculatedSector = manipulation.getSectorById(idSectors, typeMap);
+//            calculatedSector = manipulation.getSectorById(idSectors, typeMap);
         }
         return calculatedSector;
     }

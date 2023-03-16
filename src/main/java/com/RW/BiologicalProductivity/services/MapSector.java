@@ -8,7 +8,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 
 public class MapSector  implements Cloneable{
-    private final static double noDataValue = -99999.0;
+    public final static double noDataValue = -99999.0;
     private static Mat palitraHSV = null;
     private static final double kPalitra = 1.5;
     private static final int rowPalitra = 30;
@@ -39,12 +39,25 @@ public class MapSector  implements Cloneable{
         this.cornerCoords = cornerCoords; 
         this.hasNoData = hasNoData; 
     }
-
+    
     public void setMaxMinMapValue(double max, double min){
         this.minMapValue = min;
         this.maxMapValue = max;
     }
-
+    
+    public MapSector() {
+    }
+    
+    public MapSector(MapSector sector) {
+        this.id = sector.id;
+        this.offsetRows = sector.offsetRows;
+        this.offsetCols = sector.offsetCols;
+        this.rows = sector.rows;
+        this.cols = sector.cols;
+        this.cornerCoords = sector.cornerCoords;
+        this.hasNoData = sector.hasNoData;
+    }
+    
     public MapSector clone() throws CloneNotSupportedException{
         MapSector cloneSector =  new MapSector();
         cloneSector.setInitialData(id, offsetRows, offsetCols, rows, cols, cornerCoords, hasNoData);

@@ -45,7 +45,7 @@ public class MapData {
         this.lowerLeftCoords = cornerCoords[3];
         this.upRightCoords = cornerCoords[1];
         this.lowerRightCoords = cornerCoords[2];
-        
+
         this.maxMapValue = maxMapValue;
         this.minMapValue = minMapValue;
         countSectors();
@@ -55,6 +55,7 @@ public class MapData {
         this.imgCols = img.cols();
         this.imgRows = img.rows();
         this.gdalSer= new GdalService(pathToMap);
+        
         this.maxMapValue = gdalSer.getMinMax(1)[1];;
         this.minMapValue = gdalSer.getMinMax(1)[0];;
         countSectors();
@@ -62,15 +63,9 @@ public class MapData {
     public MapData(String pathToMap,
                    int rowSplit,
                    int colSplit) throws IOException {
-        this.img = Imgcodecs.imread(pathToMap, typeMapCoding);
+        this(pathToMap);
         this.colSplit = colSplit;
         this.rowSplit = rowSplit;
-        this.imgCols = img.cols();
-        this.imgRows = img.rows();
-        this.gdalSer= new GdalService(pathToMap);
-//        double[] cor = gdalSer.getTransform();
-        this.maxMapValue = gdalSer.getMinMax(1)[1];;
-        this.minMapValue = gdalSer.getMinMax(1)[0];;
         countSectors();
     }
     private double[][] calcCornWordsCoord(int offsetRows, int offsetCols, int rows, int cols){
@@ -90,8 +85,8 @@ public class MapData {
         
         int rowRemainder = imgRows % rowSplit;
         int colRemainder = imgCols % colSplit;
-        int RowSize = (int)(Math.floor(imgRows/rowSplit));
-        int ColSize = (int) (Math.floor(imgCols/colSplit));
+        int RowSize = imgRows/rowSplit;
+        int ColSize = imgCols/colSplit;
         
         for( int i = 0; i < rowSplit; i++) {
             for (int j = 0; j < colSplit; j++) {
