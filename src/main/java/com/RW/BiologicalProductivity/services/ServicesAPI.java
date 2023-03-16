@@ -47,7 +47,7 @@ public class ServicesAPI extends Calculate {
     }
    
     
-    private static MapSector getSector(int idSectors, int typeMap ) {
+    protected static MapSector getSector(int idSectors, int typeMap ) {
         readMapInfo();
         createMapsData();
         MapsManipulation manipulation = new MapsManipulation(mapHData, mapCFTData, mapNData, mapT10Data);
