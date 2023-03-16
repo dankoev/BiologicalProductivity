@@ -24,7 +24,6 @@ public class CalulateWGS {
     public static void main(String[] args) throws IOException {
         Instant start = Instant.now();
         
-        String pathToMap = "mapsInfo/H_UTM.tif";
 //        MapData mapData = new MapData(pathToMap,8,8);
 //        Mat newMat = mapData.getFillSector(44).toHeatMap();
 //        HighGui.imshow("dsas",newMat);
