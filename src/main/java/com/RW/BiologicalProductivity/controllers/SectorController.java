@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
+import com.RW.BiologicalProductivity.services.enums.TypeMap;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
@@ -30,7 +31,9 @@ public class SectorController {
         Instant start = Instant.now();
         
         // byte[] imageBytes = ServicesAPI.getHeatMapAsBytes(26, 8);
-        byte[] imageBytes = ServicesAPI.getHeatMapAsBytes(26, 8,"\\uploads");
+        ServicesAPI.setColSplit(100);
+        ServicesAPI.setRowSplit(100);
+        byte[] imageBytes = ServicesAPI.getHeatMapAsBytes(26, TypeMap.BP,"\\uploads");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_JPEG);
 

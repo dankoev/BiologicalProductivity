@@ -1,28 +1,32 @@
 package com.RW.BiologicalProductivity.services;
 
+import com.RW.BiologicalProductivity.services.enums.TypeMap;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 
 public class ServicesAPI extends Calculate {
-
+    static {
+        readMapInfo();
+    }
     private static MapSector calculatedSector;
-    public static Mat getHeatMap(int idSectors, int typeMap ){
+    private static int  rowSplit = 8;
+    private static int  colSplit = 8;
+    public static Mat getHeatMap(int idSectors, TypeMap typeMap ) throws IOException{
        return getSector(idSectors, typeMap).toHeatMap();
     }
-    public static byte [] getHeatMapAsBytes(int idSectors, int typeMap ){
+    public static byte [] getHeatMapAsBytes(int idSectors, TypeMap typeMap) throws IOException{
         Mat heatMap = getHeatMap(idSectors, typeMap);
         byte [] newheatMap = new byte[heatMap.channels() * heatMap.cols() * heatMap.rows()];
         heatMap.get(0,0, newheatMap);
         return newheatMap;
     }
-    public static byte [] getHeatMapAsBytes(int idSectors, int typeMap, String pathToUploads){
+    public static byte [] getHeatMapAsBytes(int idSectors, TypeMap typeMap, String pathToUploads) throws IOException{
         Mat heatMap = getHeatMap(idSectors, typeMap);
         byte[] imageBytes = null;
         try {
@@ -39,7 +43,7 @@ public class ServicesAPI extends Calculate {
         }
         return imageBytes;
     }
-    public static String getPathToHeatMap(int idSectors, int typeMap ){
+    public static String getPathToHeatMap(int idSectors, TypeMap typeMap ) throws IOException{
         Mat heatMap = getHeatMap(idSectors, typeMap);
         String pathToFolder = "./uploads/heatMaps/";
         String pathToHeatMap = pathToFolder + "sector.jpeg";
@@ -49,24 +53,16 @@ public class ServicesAPI extends Calculate {
     }
    
     
-    protected static MapSector getSector(int idSectors, int typeMap ) {
-        Instant start = Instant.now();
-        
-        readMapInfo();
-        
-        Instant finish = Instant.now();
-        createMapsData();
-        long elapsed = Duration.between(start, finish).toMillis();
-        System.out.println("Чтение JSON заняло, мс: " + elapsed);
-        
-        MapsManipulation manipulation = new MapsManipulation(mapHData, mapCFTData, mapNData, mapT10Data);
-        if (typeMap > 4){
-            calculatedSector = manipulation.calculate(idSectors, typeMap - 4);
-        }
-        else{
-            calculatedSector = manipulation.getSectorById(idSectors, typeMap);
-        }
-        return calculatedSector;
+    protected static MapSector getSector(int idSectors, TypeMap typeMap) throws IOException {
+        MapsManipulationImpl manipulation = new MapsManipulationImpl(mapHinfo.pathToMap,
+                mapCFTinfo.pathToMap,
+                mapNinfo.pathToMap, mapT10info.pathToMap,rowSplit,colSplit);
+        return  manipulation.getSectorById(idSectors,typeMap);
     }
-    
+    public static void setRowSplit(int rowSplit) {
+        ServicesAPI.rowSplit = rowSplit;
+    }
+    public static void setColSplit(int colSplit) {
+        ServicesAPI.colSplit = colSplit;
+    }
 }

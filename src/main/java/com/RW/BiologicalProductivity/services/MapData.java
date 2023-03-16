@@ -1,9 +1,11 @@
 package com.RW.BiologicalProductivity.services;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
 import org.opencv.imgcodecs.Imgcodecs;
 
 
@@ -13,19 +15,21 @@ public class MapData {
                                              Imgcodecs.IMREAD_ANYDEPTH |
                                              Imgcodecs.IMREAD_LOAD_GDAL;
     
-    private Mat img;
+    private final Mat img;
     private int imgCols = 0;
     private int imgRows = 0;
 
     public double maxMapValue = 0;
     public double minMapValue = 0;
+    private GdalService gdalSer;
 
     public double[] upLeftCoords;
     public double[] lowerLeftCoords;
     public double[] upRightCoords;
     public double[] lowerRightCoords;
     
-    public int nSectors = 64;
+    private int rowSplit = 8;
+    private int colSplit = 8;
     public List<MapSector> sectors = new ArrayList<>();
 
 
@@ -41,24 +45,27 @@ public class MapData {
         this.lowerLeftCoords = cornerCoords[3];
         this.upRightCoords = cornerCoords[1];
         this.lowerRightCoords = cornerCoords[2];
-        
+
         this.maxMapValue = maxMapValue;
         this.minMapValue = minMapValue;
         countSectors();
     }
-    public  Mat getGrayMap(double minMapValue,double maxMapValue){
-        Mat newImg = new Mat(imgRows, imgCols, CvType.CV_8U);
-        int newvValue;
-        double currValue;
-        for (int x = 0; x < imgRows; x++) {
-            for (int y = 0; y < imgCols; y++) {
-                currValue = img.get(x,y)[0];
-                newvValue = (int)(255 * (currValue - minMapValue) / maxMapValue);
-                newImg.put(x, y , newvValue);
-            }
-            
-        }
-        return newImg;
+    private MapData(String pathToMap) throws IOException {
+        this.img = Imgcodecs.imread(pathToMap, typeMapCoding);
+        this.imgCols = img.cols();
+        this.imgRows = img.rows();
+        this.gdalSer= new GdalService(pathToMap);
+        
+        this.maxMapValue = gdalSer.getMinMax(1)[1];
+        this.minMapValue = gdalSer.getMinMax(1)[0];
+    }
+    public MapData(String pathToMap,
+                   int rowSplit,
+                   int colSplit) throws IOException {
+        this(pathToMap);
+        this.colSplit = colSplit;
+        this.rowSplit = rowSplit;
+        countSectors();
     }
     private double[][] calcCornWordsCoord(int offsetRows, int offsetCols, int rows, int cols){
         double[][] cornerCoords = new double[4][2];
@@ -74,16 +81,23 @@ public class MapData {
         boolean hasNoData;
         int offsetRows,offsetCols,cols,rows;
         double[][] cornerCoords;
-        for( int i = 0; i < Math.sqrt(nSectors); i++) {
-            for (int j = 0; j < Math.sqrt(nSectors); j++) {
+        
+        int rowRemainder = imgRows % rowSplit;
+        int colRemainder = imgCols % colSplit;
+        int RowSize = imgRows/rowSplit;
+        int ColSize = imgCols/colSplit;
+        
+        for( int i = 0; i < rowSplit; i++) {
+            for (int j = 0; j < colSplit; j++) {
                 MapSector sector = new MapSector();
-                offsetRows = (int)(imgRows / Math.sqrt(nSectors) * i);
-                offsetCols = (int) (imgCols / Math.sqrt(nSectors) * j);
-                cols = (int) (imgCols / Math.sqrt(nSectors) * (j+1)) - offsetCols;
-                rows = (int)(imgRows / Math.sqrt(nSectors) * (i+1)) - offsetRows;
+                offsetRows = i < rowRemainder ? (RowSize+1) * i: RowSize * i;
+                rows = i < rowRemainder ? RowSize+1: RowSize;
+                
+                offsetCols = j < colRemainder ? (ColSize+1) * j: ColSize * j;
+                cols = j < colRemainder ? ColSize+1: ColSize;
+                
                 cornerCoords = calcCornWordsCoord(offsetRows,offsetCols,rows,cols);
                 hasNoData = detectNoDataSectors(offsetRows,offsetCols,rows,cols);
-
                 sector.setInitialData(id, offsetRows, offsetCols, rows, cols, cornerCoords,hasNoData);
                 sector.setMaxMinMapValue(maxMapValue, minMapValue);
                 this.sectors.add(sector);
@@ -113,12 +127,8 @@ public class MapData {
     }
     public MapSector getFillSector(int idSector){
         MapSector sector = new MapSector();
-        try {
-            sector = sectors.get(idSector).clone();
-        } catch (CloneNotSupportedException e) {
-           System.out.println("Ошибка клонирования сектора");
-        }
-
+        sector = sectors.get(idSector).clone();
+        
         if (sector.hasNoData|| !sector.mapDataList.isEmpty())
             return sector;
         double value;
@@ -134,17 +144,7 @@ public class MapData {
         }
         return sector;
     }
-    private double[] pixelToWord(int x, int y){
-        double rx = (double)x / imgRows;
-        double ry = (double)y / imgCols;
-
-        double[] rightSide = this.lerp(upRightCoords, lowerRightCoords, rx);
-        double[] leftSide  = this.lerp(upLeftCoords, lowerLeftCoords, rx);
-        
-        return lerp( leftSide, rightSide, ry );
-    }
-    private double[] lerp( double[]p1,double[]p2,double t){
-        return new double[]{ ((1-t)*p1[0]) + (t*p2[0]),
-                ((1-t)*p1[1]) + (t*p2[1])};
+    private double[] pixelToWord(int row, int col){
+        return gdalSer.getGeoCoordByPixels(row,col);
     }
 }

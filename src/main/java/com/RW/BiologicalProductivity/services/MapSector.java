@@ -7,8 +7,8 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 
-public class MapSector  implements Cloneable{
-    private final static double noDataValue = -99999.0;
+public class MapSector {
+    public final static double noDataValue = -99999.0;
     private static Mat palitraHSV = null;
     private static final double kPalitra = 1.5;
     private static final int rowPalitra = 30;
@@ -25,9 +25,7 @@ public class MapSector  implements Cloneable{
 
     public double maxMapValue = noDataValue;
     public double minMapValue= noDataValue;
-
     public List<MapElementData> mapDataList = new ArrayList<>();
-
     public void setInitialData (int id,int offsetRows,int offsetCols,
                             int rows,int cols,double[][] cornerCoords,
                             boolean hasNoData){
@@ -39,20 +37,23 @@ public class MapSector  implements Cloneable{
         this.cornerCoords = cornerCoords; 
         this.hasNoData = hasNoData; 
     }
-
+    
     public void setMaxMinMapValue(double max, double min){
         this.minMapValue = min;
         this.maxMapValue = max;
     }
-
-    public MapSector clone() throws CloneNotSupportedException{
+    
+    public MapSector() {
+    }
+    
+    public MapSector clone(){
         MapSector cloneSector =  new MapSector();
         cloneSector.setInitialData(id, offsetRows, offsetCols, rows, cols, cornerCoords, hasNoData);
         cloneSector.setMaxMinMapValue(maxMapValue, minMapValue);
-        cloneSector.mapDataList.addAll(mapDataList);
+        cloneSector.mapDataList.addAll(this.mapDataList);
         return cloneSector;
     }
-
+    
     public Mat toHeatMap(){
         try {
             double[] RGBWhite = {255,2555,255};
@@ -72,7 +73,7 @@ public class MapSector  implements Cloneable{
                     }
                     else{
                         valueRGB = palitraHSV.get(0,(int)((lenPalitraHSV-1) * (el.value - minMapValue)/(maxMapValue - minMapValue)));
-                    } 
+                    }
                     if (valueRGB != null)
                         newImg.put(el.x- this.offsetRows, el.y-this.offsetCols, valueRGB);
                     else
