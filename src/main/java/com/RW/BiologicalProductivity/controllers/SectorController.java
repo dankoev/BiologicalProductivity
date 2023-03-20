@@ -31,9 +31,9 @@ public class SectorController {
         Instant start = Instant.now();
         
         // byte[] imageBytes = ServicesAPI.getHeatMapAsBytes(26, 8);
-        ServicesAPI.setColSplit(100);
-        ServicesAPI.setRowSplit(100);
-        byte[] imageBytes = ServicesAPI.getHeatMapAsBytes(26, TypeMap.BP,"\\uploads");
+        ServicesAPI.setColSplit(9);
+        ServicesAPI.setRowSplit(9);
+        byte[] imageBytes = ServicesAPI.getHeatMapAsBytes(4, TypeMap.BP,"\\uploads");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_JPEG);
 
