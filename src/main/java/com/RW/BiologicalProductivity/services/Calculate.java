@@ -15,10 +15,10 @@ class Calculate {
         nu.pattern.OpenCV.loadLocally();
         System.out.println("Load library");
     }
-    public static String pathToMapHInfo ="mapsInfo/mapHInfo.json";
-    public static String pathToMapCFTInfo ="mapsInfo/mapCFTInfo.json";
-    public static String pathToMapNInfo ="mapsInfo/mapNInfo.json";
-    public static String pathToMapT10Info ="mapsInfo/mapT10Info.json";
+    public static String pathToMapHInfo ="maps/region_1/info/mapHInfo.json";
+    public static String pathToMapCFTInfo ="maps/region_1/info/mapCFTInfo.json";
+    public static String pathToMapNInfo ="maps/region_1/info/mapNInfo.json";
+    public static String pathToMapT10Info ="maps/region_1/info/mapT10Info.json";
 
 
     public static String pathToHSectors ="src/main/resources/static/data/sectors/H/";

@@ -1,7 +1,7 @@
 HELP.md
-/mapsInfo
+sectors/
 target/
-mapsInfo/
+maps/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
