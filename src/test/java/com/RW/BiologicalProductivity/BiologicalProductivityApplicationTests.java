@@ -1,13 +1,8 @@
 package com.RW.BiologicalProductivity;
 
-import com.RW.BiologicalProductivity.services.MapData;
+import com.RW.BiologicalProductivity.services.MapService.MapAPI;
 
-import com.RW.BiologicalProductivity.services.MapElementData;
-import com.RW.BiologicalProductivity.services.ServicesAPI;
-
-import com.RW.BiologicalProductivity.services.MapsManipulationImpl;
-import com.RW.BiologicalProductivity.services.enums.TypeMap;
-import com.RW.BiologicalProductivity.services.interfaces.MapsManipulation;
+import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -24,38 +19,16 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 @SpringBootTest
-class BiologicalProductivityApplicationTests extends ServicesAPI {
-
-	@Test
-	void contextLoads() throws IOException {
-
-		List<MapElementData> sectorData = getSector(26,TypeMap.ZM).mapDataList;
-		List<MapElementData> sectorData2 = getSector(26,TypeMap.ZM).mapDataList;
-		List<MapElementData> result = new ArrayList<>();
-		double value;
-		
-		Instant start = Instant.now();
-		
-		for (int i = 0 ; i < sectorData.size(); i++) {
-			MapElementData mapElementData = new MapElementData();
-			value = sectorData.get(i).value * sectorData2.get(i).value;
-			mapElementData.setData(value,sectorData.get(i).x,sectorData.get(i).y);
-			result.add(mapElementData);
-		}
-		Instant finish = Instant.now();
-		
-		long elapsed = Duration.between(start, finish).toMillis();
-		System.out.println("Прошло времени, мс: " + elapsed);
-	}
+class BiologicalProductivityApplicationTests extends MapAPI {
+	
 	@Test
 	void test1() throws IOException {
 		Mat newM;
 		Instant start = Instant.now();
-		newM = ServicesAPI.getHeatMap(28, TypeMap.BP);
+		newM = MapAPI.getHeatMap(28, TypeMap.BP);
 		HighGui.imshow("sdfs", newM);
 		Instant finish = Instant.now();
 	}

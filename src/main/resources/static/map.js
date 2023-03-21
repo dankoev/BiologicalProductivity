@@ -32,9 +32,6 @@ function createMap() {
     center: mapData.coordinatesCenter,
     zoom: mapData.zoom,
     controls: ['zoomControl', 'typeSelector'],
-  }, {
-    minZoom: 5,
-    maxZoom: 7,
   });
 }
 function addMapEvent() {
@@ -59,9 +56,30 @@ function createLayer() {
   mapData.map.layers.add(imgLayer);
   console.log('Succses creating layer');
 }
+function createPolyWithIMG() {
+  const myPolygon = new ymaps.Polygon(
+    [
+      [
+        [99.5819031614, 56.32701098489841], [103.9162531614001, 56.32701098489841],
+        [103.9162531614001, 54.87637711769787], [99.5819031614, 54.87637711769787],
+      ],
+    ],
+    {
+      balloonContent: 'Сектор 26',
+    },
+    {
+      fillImageHref: 'img/tile_x_50_y_20_z_6.jpeg',
+      fillMethod: 'stretch',
+      stroke: false,
+      opacity: 0.8,
+    },
+  );
+  mapData.map.geoObjects.add(myPolygon);
+}
 function init() {
   createMap();
   addMapEvent();
-  createLayer();
+  // createLayer();
+  createPolyWithIMG();
 }
 ymaps.ready(init);

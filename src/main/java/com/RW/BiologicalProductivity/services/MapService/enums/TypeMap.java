@@ -1,4 +1,4 @@
-package com.RW.BiologicalProductivity.services.enums;
+package com.RW.BiologicalProductivity.services.MapService.enums;
 
 public enum TypeMap {
     H, CFT, N, T,

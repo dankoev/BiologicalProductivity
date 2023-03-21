@@ -1,7 +1,7 @@
-package com.RW.BiologicalProductivity.services.interfaces;
+package com.RW.BiologicalProductivity.services.MapService.interfaces;
 
-import com.RW.BiologicalProductivity.services.MapSector;
-import com.RW.BiologicalProductivity.services.enums.TypeMap;
+import com.RW.BiologicalProductivity.services.MapService.MapSector;
+import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
 
 import java.io.IOException;
 

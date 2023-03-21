@@ -1,11 +1,15 @@
-package com.RW.BiologicalProductivity.services;
+package com.RW.BiologicalProductivity.services.MapService;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.RW.BiologicalProductivity.services.GDAL.GdalService;
+import com.RW.BiologicalProductivity.services.MapService.models.MapInfo;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
 import org.opencv.imgcodecs.Imgcodecs;
 
 
@@ -16,53 +20,32 @@ public class MapData {
                                              Imgcodecs.IMREAD_LOAD_GDAL;
     
     private final Mat img;
-    private int imgCols = 0;
+    private final String name;
+    private int  imgCols = 0;
     private int imgRows = 0;
 
     public double maxMapValue = 0;
     public double minMapValue = 0;
-    private GdalService gdalSer;
-
-    public double[] upLeftCoords;
-    public double[] lowerLeftCoords;
-    public double[] upRightCoords;
-    public double[] lowerRightCoords;
+    private final GdalService gdalSer;
     
     private int rowSplit = 8;
     private int colSplit = 8;
     public List<MapSector> sectors = new ArrayList<>();
-
-
-    public MapData(String pathToMap,
-                    double[][] cornerCoords,/*left-top, right-top,right-bottom,left-bottom */
-                    double maxMapValue,
-                    double minMapValue){
-        this.img = Imgcodecs.imread(pathToMap, typeMapCoding);
+    
+    private MapData(MapInfo mapInfo) throws IOException {
+        this.gdalSer= new GdalService(mapInfo.pathToMap);
+        this.img = Imgcodecs.imread(mapInfo.pathToMap, typeMapCoding);
         this.imgCols = img.cols();
         this.imgRows = img.rows();
-
-        this.upLeftCoords = cornerCoords[0];
-        this.lowerLeftCoords = cornerCoords[3];
-        this.upRightCoords = cornerCoords[1];
-        this.lowerRightCoords = cornerCoords[2];
-
-        this.maxMapValue = maxMapValue;
-        this.minMapValue = minMapValue;
-        countSectors();
-    }
-    private MapData(String pathToMap) throws IOException {
-        this.img = Imgcodecs.imread(pathToMap, typeMapCoding);
-        this.imgCols = img.cols();
-        this.imgRows = img.rows();
-        this.gdalSer= new GdalService(pathToMap);
+        this.name = mapInfo.name;
         
-        this.maxMapValue = gdalSer.getMinMax(1)[1];
-        this.minMapValue = gdalSer.getMinMax(1)[0];
+        this.maxMapValue = mapInfo.maxMapValue;
+        this.minMapValue = mapInfo.minMapValue;
     }
-    public MapData(String pathToMap,
+    public MapData(MapInfo mapInfo,
                    int rowSplit,
                    int colSplit) throws IOException {
-        this(pathToMap);
+        this(mapInfo);
         this.colSplit = colSplit;
         this.rowSplit = rowSplit;
         countSectors();
@@ -126,22 +109,16 @@ public class MapData {
 
     }
     public MapSector getFillSector(int idSector){
-        MapSector sector = new MapSector();
-        sector = sectors.get(idSector).clone();
-        
-        if (sector.hasNoData|| !sector.mapDataList.isEmpty())
+        Instant start = Instant.now();
+        MapSector sector = sectors.get(idSector).clone();
+        if (sector.hasNoData|| !sector.data.empty())
             return sector;
-        double value;
-        double[] wordCoordinate;
-        for (int x = sector.offsetRows; x < sector.offsetRows + sector.rows; x++){
-            for ( int y = sector.offsetCols; y < sector.offsetCols + sector.cols; y++) {
-                value = img.get(x,y)[0];
-                wordCoordinate = pixelToWord(x,y);
-                MapElementData mapData =  new MapElementData();
-                mapData.setData(value,x,y,wordCoordinate);
-                sector.mapDataList.add(mapData);
-            }
-        }
+        Rect rect = new Rect(sector.offsetCols,sector.offsetRows,
+                sector.cols,sector.rows);
+        sector.data = img.submat(rect);
+
+        Instant finish = Instant.now();
+        long elapsed = Duration.between(start, finish).toMillis();
         return sector;
     }
     private double[] pixelToWord(int row, int col){

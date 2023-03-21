@@ -1,36 +1,31 @@
-package com.RW.BiologicalProductivity.services;
-import com.RW.BiologicalProductivity.services.enums.TypeMap;
-import com.RW.BiologicalProductivity.services.interfaces.MapsManipulation;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
+package com.RW.BiologicalProductivity.services.MapService;
+import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
+import com.RW.BiologicalProductivity.services.MapService.interfaces.MapsManipulation;
+import com.RW.BiologicalProductivity.services.MapService.models.MapInfo;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MapsManipulationImpl implements MapsManipulation {
 
     private final static double noDataValue = -99999.0;
     private final static double r = 2;
 
-    public String pathMapH;
-    public String pathMapCFT;
-    public String pathMapN;
-    public String pathMapT;
-    private int rowSplit;
-    private int colSplit;
+    private final MapInfo InfoMapH;
+    private final MapInfo InfoMapCFT;
+    private final MapInfo InfoMapN;
+    private final MapInfo InfoMapT;
+    private final int rowSplit;
+    private final int colSplit;
 
 
     
-    public MapsManipulationImpl(String pathMapH, String pathMapCFT, String pathMapN, String pathMapT, int rowSplit, int colSplit) {
-        this.pathMapH = pathMapH;
-        this.pathMapCFT = pathMapCFT;
-        this.pathMapN = pathMapN;
-        this.pathMapT = pathMapT;
+    public MapsManipulationImpl(MapInfo InfoMapH, MapInfo InfoMapCFT, MapInfo InfoMapN, MapInfo InfoMapT, int rowSplit, int colSplit) {
+        this.InfoMapH = InfoMapH;
+        this.InfoMapCFT = InfoMapCFT;
+        this.InfoMapN = InfoMapN;
+        this.InfoMapT = InfoMapT;
         this.rowSplit = rowSplit;
         this.colSplit = colSplit;
     }
@@ -38,19 +33,19 @@ public class MapsManipulationImpl implements MapsManipulation {
     public MapSector  getSectorById(int sectorId, TypeMap typeMap) throws IOException {
         return switch (typeMap){
             case H -> {
-                MapData mapH = new MapData(pathMapH,rowSplit,colSplit);
+                MapData mapH = new MapData(InfoMapH,rowSplit,colSplit);
                 yield mapH.getFillSector(sectorId);
             }
             case CFT -> {
-                MapData mapCFT = new MapData(pathMapCFT,rowSplit,colSplit);
+                MapData mapCFT = new MapData(InfoMapCFT,rowSplit,colSplit);
                 yield mapCFT.getFillSector(sectorId);
             }
             case N -> {
-                MapData mapN = new MapData(pathMapN,rowSplit,colSplit);
+                MapData mapN = new MapData(InfoMapN,rowSplit,colSplit);
                 yield mapN.getFillSector(sectorId);
             }
             case T -> {
-                MapData mapT = new MapData(pathMapT,rowSplit,colSplit);
+                MapData mapT = new MapData(InfoMapT,rowSplit,colSplit);
                 yield mapT.getFillSector(sectorId);
             }
             case ZM -> {
@@ -88,42 +83,36 @@ public class MapsManipulationImpl implements MapsManipulation {
     private MapSector calculateFormula(MapSector firstSector,
                                        MapSector secondSector,
                                        int numberFormula){
-            MapSector newSector = firstSector.clone();
-            newSector.mapDataList.clear();
-            MapElementData mapData;
-            for (int i = 0 ; i < firstSector.mapDataList.size(); i++) {
-                mapData = calcMapData(firstSector.mapDataList.get(i),
-                        secondSector.mapDataList.get(i),numberFormula);
-                newSector.mapDataList.add(mapData);
+        MapSector newSector = firstSector.clone();
+        double newValue;
+        for (int i = 0; i < firstSector.data.rows(); i++) {
+            for (int j = 0; j < firstSector.data.cols() ; j++){
+                newValue = calcMapData(firstSector.data.get(i,j)[0],
+                        secondSector.data.get(i,j)[0],numberFormula);
+                newSector.data.put(i,j,newValue);
             }
-            return newSector;
+        }
+        return newSector;
     }
     
-    private MapElementData calcMapData(MapElementData firstData, MapElementData secondData, int numberFormula){
-        MapElementData newMapData = new MapElementData();
+    private double calcMapData(double firstData, double secondData, int numberFormula){
         double newValue;
-        if (firstData.isNoData || secondData.isNoData) {
-            newMapData.setData(noDataValue, firstData.x, firstData.y);
-            return newMapData;
-        }
         switch (numberFormula) {
-            case 1 -> newValue = (200 * firstData.value / 1000 + 306) * secondData.value;
-            case 2 -> newValue = firstData.value / secondData.value;
+            case 1 -> newValue = (200 * firstData / 1000 + 306) * secondData;
+            case 2 -> newValue = firstData / secondData;
             case 3 -> {
                 int r = 2;
-                double multiplier = (r - 1) / (r * secondData.value + 1);
-                double pow = 1 / (r * secondData.value);
-                newValue = 100 * firstData.value * Math.pow(multiplier, pow);
+                double multiplier = (r - 1) / (r * secondData + 1);
+                double pow = 1 / (r * secondData);
+                newValue = 100 * firstData * Math.pow(multiplier, pow);
             }
             case 4 ->//fourthPart1
-                    newValue = 0.0045 * (1 - Math.abs(64 - firstData.value) / 64) * secondData.value;
+                    newValue = 0.0045 * (1 - Math.abs(64 - firstData) / 64) * secondData;
             case 5 ->//fourthPart2
-                    newValue = firstData.value * secondData.value - 1;
+                    newValue = firstData * secondData - 1;
             default -> newValue = noDataValue;
         }
-        
-        newMapData.setData(newValue, firstData.x, firstData.y);
-        return newMapData;
+        return newValue;
     }
 
 }

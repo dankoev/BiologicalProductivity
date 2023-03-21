@@ -1,4 +1,4 @@
-package com.RW.BiologicalProductivity.services;
+package com.RW.BiologicalProductivity.services.GDAL;
 
 import org.gdal.gdal.Band;
 import org.gdal.gdal.Dataset;
@@ -16,7 +16,7 @@ public class GdalService {
         gdal.AllRegister();
         this.hDataset = gdal.Open(pathToMap, gdalconstConstants.GA_ReadOnly);
         if (hDataset == null){
-            throw new IOException("error read file");
+            throw new IOException("GDAl: Error read file");
         }
         rasterCount = hDataset.getRasterCount();
         transform = hDataset.GetGeoTransform();
