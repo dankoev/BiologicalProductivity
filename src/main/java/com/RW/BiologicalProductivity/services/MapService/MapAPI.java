@@ -1,29 +1,23 @@
 package com.RW.BiologicalProductivity.services.MapService;
 
 import com.RW.BiologicalProductivity.models.PolygonInfo;
-import com.RW.BiologicalProductivity.models.SectorsData;
 import com.RW.BiologicalProductivity.models.SectorsInfo;
 import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
+import com.RW.BiologicalProductivity.services.MapService.interfaces.MapsManipulation;
 import com.RW.BiologicalProductivity.services.MapService.models.MapInfo;
 import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
 
 public class MapAPI {
     static{
@@ -39,10 +33,28 @@ public class MapAPI {
     private static final String pathToMapT10Info = pathToMapsInfo + "mapT10Info.json";
     
     
-    protected static MapInfo mapHinfo;
-    protected static MapInfo mapCFTinfo;
-    protected static MapInfo mapNinfo;
-    protected static MapInfo mapT10info;
+    private static MapInfo mapHinfo;
+    private static MapInfo mapCFTinfo;
+    private static MapInfo mapNinfo;
+    private static MapInfo mapT10info;
+    
+    private static int  rowSplit = 8;
+    private static int  colSplit = 8;
+    public static MapInfo getMapHinfo() {
+        return mapHinfo;
+    }
+    
+    public static MapInfo getMapCFTinfo() {
+        return mapCFTinfo;
+    }
+    
+    public static MapInfo getMapNinfo() {
+        return mapNinfo;
+    }
+    
+    public static MapInfo getMapT10info() {
+        return mapT10info;
+    }
     
     private static void readMapInfo(){
         mapHinfo = readJSON(pathToMapHInfo);
@@ -65,8 +77,6 @@ public class MapAPI {
             return null;
         }
     }
-    private static int  rowSplit = 8;
-    private static int  colSplit = 8;
     public static Mat getHeatMap(int idSectors, TypeMap typeMap ) throws IOException{
        return getSector(idSectors, typeMap).toHeatMap();
     }
@@ -107,7 +117,7 @@ public class MapAPI {
 //
 //    }
     public static MapSector getSector(int idSectors, TypeMap typeMap) throws IOException {
-        MapsManipulationImpl manipulation = new MapsManipulationImpl(mapHinfo, mapCFTinfo,mapNinfo, mapT10info,rowSplit,colSplit);
+        MapsManipulation manipulation = new MapsManipWithMapInfo(mapHinfo, mapCFTinfo,mapNinfo, mapT10info,rowSplit,colSplit);
         return  manipulation.getSectorById(idSectors,typeMap);
     }
     public static void setRowSplit(int rowSplit) {

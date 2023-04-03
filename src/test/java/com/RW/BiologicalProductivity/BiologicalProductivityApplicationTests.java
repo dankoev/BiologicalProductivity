@@ -3,6 +3,8 @@ package com.RW.BiologicalProductivity;
 import com.RW.BiologicalProductivity.models.RegionInfo;
 import com.RW.BiologicalProductivity.services.MapService.MapAPI;
 
+import com.RW.BiologicalProductivity.services.MapService.MapData;
+import com.RW.BiologicalProductivity.services.MapService.MapsManipWithMapData;
 import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
 
 import com.google.gson.Gson;
@@ -26,11 +28,10 @@ class BiologicalProductivityApplicationTests extends MapAPI {
 	
 	@Test
 	void test1() throws IOException {
-		Mat newM;
-		Instant start = Instant.now();
-		newM = MapAPI.getHeatMap(26, TypeMap.BP);
-		HighGui.imshow("sdfs", newM);
-		Instant finish = Instant.now();
+		
+		MapData  mH = new MapData(MapAPI.getMapHinfo(),);
+		MapData  mH = new MapData(MapAPI.getMapHinfo())
+		MapsManipWithMapData.
 	}
 	@Test
 	void test3() throws IOException {

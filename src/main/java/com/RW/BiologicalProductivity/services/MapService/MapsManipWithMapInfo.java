@@ -6,8 +6,9 @@ import com.RW.BiologicalProductivity.services.MapService.models.MapInfo;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-
-public class MapsManipulationImpl implements MapsManipulation {
+/**
+ * Constructor with MapInfo classes */
+public class MapsManipWithMapInfo implements MapsManipulation {
 
     private final static double noDataValue = -99999.0;
     private final static double r = 2;
@@ -21,7 +22,7 @@ public class MapsManipulationImpl implements MapsManipulation {
 
 
     
-    public MapsManipulationImpl(MapInfo InfoMapH, MapInfo InfoMapCFT, MapInfo InfoMapN, MapInfo InfoMapT, int rowSplit, int colSplit) {
+    public MapsManipWithMapInfo(MapInfo InfoMapH, MapInfo InfoMapCFT, MapInfo InfoMapN, MapInfo InfoMapT, int rowSplit, int colSplit) {
         this.InfoMapH = InfoMapH;
         this.InfoMapCFT = InfoMapCFT;
         this.InfoMapN = InfoMapN;
@@ -80,7 +81,7 @@ public class MapsManipulationImpl implements MapsManipulation {
             }
         };
     }
-    private MapSector calculateFormula(MapSector firstSector,
+    public  static  MapSector calculateFormula(MapSector firstSector,
                                        MapSector secondSector,
                                        int numberFormula){
         Instant start = Instant.now();
@@ -102,7 +103,7 @@ public class MapsManipulationImpl implements MapsManipulation {
         return newSector;
     }
     
-    private double calcMapData(double firstData, double secondData, int numberFormula){
+    public static double  calcMapData(double firstData, double secondData, int numberFormula){
         if (firstData == noDataValue || secondData == noDataValue){
             return noDataValue;
         }
