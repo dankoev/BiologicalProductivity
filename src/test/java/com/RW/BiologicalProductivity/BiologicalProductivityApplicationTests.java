@@ -28,10 +28,7 @@ class BiologicalProductivityApplicationTests extends MapAPI {
 	
 	@Test
 	void test1() throws IOException {
-		
-		MapData  mH = new MapData(MapAPI.getMapHinfo(),);
-		MapData  mH = new MapData(MapAPI.getMapHinfo())
-		MapsManipWithMapData.
+
 	}
 	@Test
 	void test3() throws IOException {

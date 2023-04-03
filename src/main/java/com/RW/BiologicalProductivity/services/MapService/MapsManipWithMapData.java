@@ -2,7 +2,6 @@ package com.RW.BiologicalProductivity.services.MapService;
 
 import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
 import com.RW.BiologicalProductivity.services.MapService.interfaces.MapsManipulation;
-import com.RW.BiologicalProductivity.services.MapService.models.MapInfo;
 
 import java.io.IOException;
 
