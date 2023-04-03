@@ -1,18 +1,29 @@
 package com.RW.BiologicalProductivity.services.MapService;
 
+import com.RW.BiologicalProductivity.models.PolygonInfo;
+import com.RW.BiologicalProductivity.models.SectorsData;
+import com.RW.BiologicalProductivity.models.SectorsInfo;
 import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
 import com.RW.BiologicalProductivity.services.MapService.models.MapInfo;
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
 
 public class MapAPI {
     static{
@@ -60,33 +71,42 @@ public class MapAPI {
        return getSector(idSectors, typeMap).toHeatMap();
     }
     public static byte [] getHeatMapAsBytes(int idSectors, TypeMap typeMap) throws IOException{
-        Mat heatMap = getHeatMap(idSectors, typeMap);
-        byte [] newheatMap = new byte[heatMap.channels() * heatMap.cols() * heatMap.rows()];
-        heatMap.get(0,0, newheatMap);
-        return newheatMap;
-    }
-    
-    /**This must be changed*/
-    public static byte [] getHeatMapAsBytes(int idSectors, TypeMap typeMap, String pathToUploads) throws IOException{
         
         Mat heatMap = getHeatMap(idSectors, typeMap);
-        byte[] imageBytes = null;
-        try {
-            if (!Files.exists(Paths.get(pathToUploads)))
-                Files.createDirectory(Paths.get(pathToUploads));
-            String pathToHeatMap = pathToUploads + "\\sector.jpeg";
-            Imgcodecs.imwrite(pathToHeatMap, heatMap);
-            System.out.println("******File wrote*****");
-            imageBytes = Files.readAllBytes(Paths.get(pathToHeatMap));
-            System.out.println("******File read*****");
-        } catch (Exception e) {
-            System.out.println("Error creating directory or reading file!");
-            return null;
-        }
-        return imageBytes;
+        MatOfByte buf = new MatOfByte();
+        Imgcodecs.imencode(".jpeg",heatMap,buf);
+        return buf.toArray();
     }
-    
-    protected static MapSector getSector(int idSectors, TypeMap typeMap) throws IOException {
+    public static byte [] calculPolygon(PolygonInfo info) throws IOException{
+        Instant start = Instant.now();
+        Resource sectorRes = new FileSystemResource("sectors/region_1/data/8/ZM/sector_26.jpeg");
+        byte[] sector = Files.readAllBytes(sectorRes.getFile().toPath());
+        Instant finish = Instant.now();
+        long elapsed = Duration.between(start, finish).toMillis();
+        System.out.println("Прошло времени, мс: " + elapsed);
+        return sector;
+    }
+    public static byte[] getHeatMapByPath (String path) throws IOException {
+        Resource sectorRes = new FileSystemResource(path);
+        return Files.readAllBytes(sectorRes.getFile().toPath());
+    }
+    public static  SectorsInfo getSectorsInfoByPolygon(PolygonInfo polyInfo) throws IOException{
+        Gson gson = new Gson();
+        SectorsInfo info = gson.fromJson(new FileReader("sectors/sectorsInfoTest.json"), SectorsInfo.class);
+        
+        return info;
+    }
+//    private List<SectorsData> check(PolygonInfo polyInfo,SectorsInfo sectorsInfo){
+//        polyInfo.getCoordinates().stream().map()
+//    }
+//    private boolean checkEntry(SectorsData sectorsData,List<Double[]> polyCoords){
+//        double[][] sectorCoords = sectorsData.getCornerCoords();
+//        for (int i = 0; i < s; i++) {
+//
+//        }
+//
+//    }
+    public static MapSector getSector(int idSectors, TypeMap typeMap) throws IOException {
         MapsManipulationImpl manipulation = new MapsManipulationImpl(mapHinfo, mapCFTinfo,mapNinfo, mapT10info,rowSplit,colSplit);
         return  manipulation.getSectorById(idSectors,typeMap);
     }

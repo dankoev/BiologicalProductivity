@@ -83,7 +83,11 @@ public class MapsManipulationImpl implements MapsManipulation {
     private MapSector calculateFormula(MapSector firstSector,
                                        MapSector secondSector,
                                        int numberFormula){
+        Instant start = Instant.now();
         MapSector newSector = firstSector.clone();
+        if (newSector.hasNoData){
+            return newSector;
+        }
         double newValue;
         for (int i = 0; i < firstSector.data.rows(); i++) {
             for (int j = 0; j < firstSector.data.cols() ; j++){
@@ -92,27 +96,41 @@ public class MapsManipulationImpl implements MapsManipulation {
                 newSector.data.put(i,j,newValue);
             }
         }
+        Instant end  = Instant.now();
+        System.out.println("Время расчета формулы " + numberFormula
+                + ": " + Duration.between(start,end).toMillis());
         return newSector;
     }
     
     private double calcMapData(double firstData, double secondData, int numberFormula){
-        double newValue;
+        if (firstData == noDataValue || secondData == noDataValue){
+            return noDataValue;
+        }
         switch (numberFormula) {
-            case 1 -> newValue = (200 * firstData / 1000 + 306) * secondData;
-            case 2 -> newValue = firstData / secondData;
+            case 1 -> {
+                return (200 * firstData / 1000 + 306) * secondData;
+            }
+            case 2 -> {
+                return firstData / secondData;
+            }
             case 3 -> {
                 int r = 2;
                 double multiplier = (r - 1) / (r * secondData + 1);
                 double pow = 1 / (r * secondData);
-                newValue = 100 * firstData * Math.pow(multiplier, pow);
+                return 100 * firstData * Math.pow(multiplier, pow);
             }
-            case 4 ->//fourthPart1
-                    newValue = 0.0045 * (1 - Math.abs(64 - firstData) / 64) * secondData;
-            case 5 ->//fourthPart2
-                    newValue = firstData * secondData - 1;
-            default -> newValue = noDataValue;
+            case 4 ->{
+                //fourthPart1
+                return  0.0045 * (1 - Math.abs(64 - firstData) / 64) * secondData;
+            }
+            case 5 ->{
+                //fourthPart2
+                return firstData * secondData - 1;
+            }
+            default -> {
+                return noDataValue;
+            }
         }
-        return newValue;
     }
 
 }

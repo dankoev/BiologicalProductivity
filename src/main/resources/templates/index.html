@@ -6,16 +6,12 @@
     <script src="https://api-maps.yandex.ru/2.1/?apikey=00edbb4c-85c6-4375-8249-f0baae6a12c2&lang=ru_RU&coordorder=longlat" type="text/javascript"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script type="text/javascript" src="/map.js"></script>
+    <script type="text/javascript" src="/mapHandler.js"></script>
     <script type="text/javascript" src="/sector.js"></script>
     <link href="/styles.css" rel="stylesheet" />
 <body>
     <div class="container">
         <div class="box-col">
-            <h1>Яндекс карты</h1>
-
-            <div>
-                <p id="message"></p>
-            </div>
             <div class="box-row">
                 <div class="dox-col">
                     <div id="map"></div>
@@ -27,7 +23,8 @@
                 <div class="dox-col">
                     <h3>Sector information</h3>
                     <button id="getHeatMap">Рассчитать карту </button>
-                    <div id="imageContainer"></div>
+                    <button id="calculPolygon">Рассчитать область</button>
+                    <img id="imageContainer"></img>
                 </div>
             </div>
         </div>

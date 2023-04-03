@@ -34,7 +34,11 @@ public class MapData {
     
     private MapData(MapInfo mapInfo) throws IOException {
         this.gdalSer= new GdalService(mapInfo.pathToMap);
+        Instant start = Instant.now();
         this.img = Imgcodecs.imread(mapInfo.pathToMap, typeMapCoding);
+        Instant finish = Instant.now();
+        long elapsed = Duration.between(start, finish).toMillis();
+        System.out.println("Время загрузки изобрежения " + elapsed);
         this.imgCols = img.cols();
         this.imgRows = img.rows();
         this.name = mapInfo.name;
@@ -109,16 +113,12 @@ public class MapData {
 
     }
     public MapSector getFillSector(int idSector){
-        Instant start = Instant.now();
         MapSector sector = sectors.get(idSector).clone();
         if (sector.hasNoData|| !sector.data.empty())
             return sector;
         Rect rect = new Rect(sector.offsetCols,sector.offsetRows,
                 sector.cols,sector.rows);
-        sector.data = img.submat(rect);
-
-        Instant finish = Instant.now();
-        long elapsed = Duration.between(start, finish).toMillis();
+        sector.data = img.submat(rect).clone();
         return sector;
     }
     private double[] pixelToWord(int row, int col){

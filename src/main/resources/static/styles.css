@@ -40,12 +40,22 @@ body {
 }
 
 #map {
-    width: 800px;
-    height: 500px;
+    width: 1500px;
+    height: 1000px;
     border: 1px solid black;
     margin: 0;
     padding: 2px;
     overflow: hidden;
+}
+button{
+    background: rgb(40, 13, 165);
+    padding: 10px;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: normal;
 }
 #sector{
     width: 500px;
