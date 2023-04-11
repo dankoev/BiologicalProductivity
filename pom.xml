@@ -73,7 +73,7 @@
 			<artifactId>gdal</artifactId>
 			<version>3.6.0</version>
 			<scope>system</scope>
- 			<systemPath>${project.basedir}/libs/gdal/gdal-3.6.0.jar</systemPath>
+ 			<systemPath>${env.GDAL_JAR}/gdal.jar</systemPath>
 		</dependency>
 
 		<dependency>

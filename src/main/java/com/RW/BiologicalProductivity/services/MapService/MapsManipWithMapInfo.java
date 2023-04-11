@@ -1,7 +1,7 @@
 package com.RW.BiologicalProductivity.services.MapService;
+import com.RW.BiologicalProductivity.services.DB.Entities.MapInfo;
 import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
 import com.RW.BiologicalProductivity.services.MapService.interfaces.MapsManipulation;
-import com.RW.BiologicalProductivity.services.MapService.models.MapInfo;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -85,8 +85,12 @@ public class MapsManipWithMapInfo implements MapsManipulation {
                                        MapSector secondSector,
                                        int numberFormula){
         Instant start = Instant.now();
+        Instant end;
         MapSector newSector = firstSector.clone();
         if (newSector.hasNoData){
+            end = Instant.now();
+            System.out.println("Время расчета формулы " + numberFormula
+                    + ": " + Duration.between(start,end).toMillis());
             return newSector;
         }
         double newValue;
@@ -97,7 +101,7 @@ public class MapsManipWithMapInfo implements MapsManipulation {
                 newSector.data.put(i,j,newValue);
             }
         }
-        Instant end  = Instant.now();
+        end  = Instant.now();
         System.out.println("Время расчета формулы " + numberFormula
                 + ": " + Duration.between(start,end).toMillis());
         return newSector;

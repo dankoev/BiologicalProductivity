@@ -6,16 +6,17 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.RW.BiologicalProductivity.services.DB.Entities.MapInfo;
 import com.RW.BiologicalProductivity.services.GDAL.GdalService;
-import com.RW.BiologicalProductivity.services.MapService.models.MapInfo;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 
 
 public class MapData {
     private static final double noDataValue = -99999.0;
-    public static final  int typeMapCoding = Imgcodecs.IMREAD_UNCHANGED | 
+    public static final  int typeMapCodding = Imgcodecs.IMREAD_UNCHANGED |
                                              Imgcodecs.IMREAD_ANYDEPTH |
                                              Imgcodecs.IMREAD_LOAD_GDAL;
     
@@ -33,18 +34,19 @@ public class MapData {
     public List<MapSector> sectors = new ArrayList<>();
     
     private MapData(MapInfo mapInfo) throws IOException {
-        this.gdalSer= new GdalService(mapInfo.pathToMap);
+        String path = mapInfo.getRegion().getMapsRootPath()+"/" + mapInfo.getName();
+        this.gdalSer= new GdalService(path);
         Instant start = Instant.now();
-        this.img = Imgcodecs.imread(mapInfo.pathToMap, typeMapCoding);
+        this.img = Imgcodecs.imread(path, typeMapCodding);
         Instant finish = Instant.now();
         long elapsed = Duration.between(start, finish).toMillis();
         System.out.println("Время загрузки изобрежения " + elapsed);
         this.imgCols = img.cols();
         this.imgRows = img.rows();
-        this.name = mapInfo.name;
+        this.name = mapInfo.getName();
         
-        this.maxMapValue = mapInfo.maxMapValue;
-        this.minMapValue = mapInfo.minMapValue;
+        this.maxMapValue = mapInfo.getMaxValue();
+        this.minMapValue = mapInfo.getMinValue();
     }
     public MapData(MapInfo mapInfo,
                    int rowSplit,
@@ -94,28 +96,21 @@ public class MapData {
     }
     private boolean detectNoDataSectors(int offsetRows, int offsetCols, int rows, int cols){
         for (int x = offsetRows; x < offsetRows + rows; x++){
-
             if(this.img.get(x,offsetCols)[0] != noDataValue ||
                     this.img.get(x,offsetCols + cols-1)[0] != noDataValue ){
-
                     return false;
             }
         }
         for (int y = offsetCols; y < offsetCols + cols; y++){
-
             if(this.img.get(offsetRows,y)[0] != noDataValue ||
                     this.img.get(offsetRows+rows-1,y)[0] != noDataValue ){
-
                      return false;
             }
         }
         return true;
-
     }
-    public MapSector getFillSector(int idSector){
+    public synchronized MapSector getFillSector(int idSector){
         MapSector sector = sectors.get(idSector).clone();
-        if (sector.hasNoData|| !sector.data.empty())
-            return sector;
         Rect rect = new Rect(sector.offsetCols,sector.offsetRows,
                 sector.cols,sector.rows);
         sector.data = img.submat(rect).clone();

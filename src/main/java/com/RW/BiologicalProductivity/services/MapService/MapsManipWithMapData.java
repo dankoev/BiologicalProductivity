@@ -2,6 +2,7 @@ package com.RW.BiologicalProductivity.services.MapService;
 
 import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
 import com.RW.BiologicalProductivity.services.MapService.interfaces.MapsManipulation;
+import org.opencv.core.Rect;
 
 import java.io.IOException;
 
@@ -14,21 +15,19 @@ public class MapsManipWithMapData implements MapsManipulation {
 
     private final MapData mapH;
     private final MapData mapCFT;
-    private final MapData mapZ;
     private final MapData mapT;
     private final MapData mapN;
     
     
-    public MapsManipWithMapData(MapData mapH, MapData mapCFT, MapData mapZ, MapData mapT, MapData mapN) {
+    public MapsManipWithMapData(MapData mapH, MapData mapCFT, MapData mapT, MapData mapN) {
         this.mapH = mapH;
         this.mapCFT = mapCFT;
-        this.mapZ = mapZ;
         this.mapT = mapT;
         this.mapN = mapN;
     }
     
     @Override
-    public MapSector  getSectorById(int sectorId, TypeMap typeMap) throws IOException {
+    public MapSector  getSectorById(int sectorId, TypeMap typeMap) {
         return switch (typeMap){
             case H -> mapH.getFillSector(sectorId);
             case CFT -> mapCFT.getFillSector(sectorId);

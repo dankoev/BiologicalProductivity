@@ -1,56 +1,66 @@
 package com.RW.BiologicalProductivity;
 
-import com.RW.BiologicalProductivity.models.RegionInfo;
-import com.RW.BiologicalProductivity.services.MapService.MapAPI;
+import com.RW.BiologicalProductivity.services.DB.services.MapInfoService;
+import com.RW.BiologicalProductivity.services.DB.services.RegionService;
+import com.RW.BiologicalProductivity.services.GDAL.GdalService;
+import com.RW.BiologicalProductivity.services.MapService.Deployment.MapDeploymentImpl;
+import com.RW.BiologicalProductivity.services.MapService.Deployment.MapDeploymentParall;
+import com.RW.BiologicalProductivity.services.MapService.Deployment.MapUploadService;
+import com.RW.BiologicalProductivity.services.MapService.Deployment.interfaces.MapDeployment;
+import com.RW.BiologicalProductivity.services.MapService.MapApiWithMapData;
 
-import com.RW.BiologicalProductivity.services.MapService.MapData;
-import com.RW.BiologicalProductivity.services.MapService.MapsManipWithMapData;
 import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
 
-import com.google.gson.Gson;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 import org.opencv.core.Mat;
-import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.IOException;
+import java.time.Duration;
 import java.time.Instant;
 
 @SpringBootTest
-class BiologicalProductivityApplicationTests extends MapAPI {
-	
-	@Test
-	void test1() throws IOException {
-
+class BiologicalProductivityApplicationTests {
+	@Autowired
+	RegionService regionService;
+	@Autowired
+	MapInfoService mapInfoService;
+	static {
+		nu.pattern.OpenCV.loadLocally();
+		System.out.println("Load library");
 	}
 	@Test
-	void test3() throws IOException {
-		Mat newM;
-		newM = MapAPI.getSector(26, TypeMap.ZM).data;
-		boolean write  = Imgcodecs.imwrite("sector.tif",newM);
-		System.out.println(write);
+	void test1() throws IOException {
+		MapUploadService m = new MapUploadService(regionService,mapInfoService);
+		m.checkMapsDirectory();
 	}
 	@Test
 	void test2() throws IOException {
-		String path = "sectors/region_1/data/RegionInfo.json";
-		Gson gson = new Gson();
-		RegionInfo regionInfo = gson.fromJson(new FileReader(path), RegionInfo.class);
-		System.out.println("JSON прочитан для карты: "+ regionInfo.getName());
+		MapApiWithMapData api = new MapApiWithMapData("region_1",regionService);
+		Mat im1 = api.getSector(26,TypeMap.ZM).toHeatMap();
+//		Imgcodecs.imwrite("./sectors/mfd.jpeg",im1);
 	}
 	@Test
-	void JSONParce() throws ParseException, FileNotFoundException,IOException {
-		FileReader tileInfo = new FileReader("./hotspot_data/tile_x_1_y_1_z_9.json");
-		Object obj = new JSONParser().parse(tileInfo);
-		JSONObject jsonObject = (JSONObject) obj;
-		String str = jsonObject.toJSONString();
-		System.out.println(str);
+	void test3() throws IOException {
+		MapDeploymentImpl mapDeploymentImpl = new MapDeploymentImpl(regionService,"region_1");
+		mapDeploymentImpl.deployMap(TypeMap.ZM);
+//		Imgcodecs.imwrite("./sectors/mfd.jpeg",im1);
 	}
+	@Test
+	void test5() throws IOException, InterruptedException {
+		Instant start = Instant.now();
+		
+		MapDeployment mapDeployment = new MapDeploymentParall(regionService,"region_1");
+		mapDeployment.deployMap(TypeMap.BP);
+		
+		Instant finish = Instant.now();
+		System.out.println("Oбщее время выполнения "
+				+ Duration.between(start,finish).toMillis());
+	}
+
 	
 }
