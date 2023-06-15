@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>org.openpnp</groupId>
 			<artifactId>opencv</artifactId>
-			<version>[3.2.0-1,)</version>
+			<version>3.4.2-0</version>
 		</dependency>
 
 		<dependency>
@@ -75,6 +75,11 @@
 			<scope>system</scope>
  			<systemPath>${env.GDAL_JAR}/gdal.jar</systemPath>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.gdal</groupId>-->
+<!--			<artifactId>gdal</artifactId>-->
+<!--			<version>1.11.2</version>-->
+<!--		</dependency>-->
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>

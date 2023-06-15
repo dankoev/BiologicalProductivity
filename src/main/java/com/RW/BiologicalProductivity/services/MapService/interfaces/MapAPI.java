@@ -7,6 +7,7 @@ import org.opencv.core.Mat;
 import java.io.IOException;
 
 public interface MapAPI {
-    MapSector getSector(int idSectors, TypeMap typeMap) throws IOException;
-    
+    default MapSector getSector(int idSectors, TypeMap typeMap) throws IOException{
+        return null;
+    }
 }

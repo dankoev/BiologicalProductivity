@@ -1,24 +1,27 @@
 package com.RW.BiologicalProductivity.services.MapService.Deployment;
 
-import com.RW.BiologicalProductivity.services.DB.Entities.MapInfo;
-import com.RW.BiologicalProductivity.services.DB.Entities.Region;
+import com.RW.BiologicalProductivity.services.DB.entities.MapInfo;
+import com.RW.BiologicalProductivity.services.DB.entities.Region;
+import com.RW.BiologicalProductivity.services.DB.exceptions.DataBaseException;
+import com.RW.BiologicalProductivity.services.DB.exceptions.NoSuchValueException;
+import com.RW.BiologicalProductivity.services.DB.exceptions.UnknownDbException;
 import com.RW.BiologicalProductivity.services.DB.services.MapInfoService;
 import com.RW.BiologicalProductivity.services.DB.services.RegionService;
 import com.RW.BiologicalProductivity.services.GDAL.GdalService;
 import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class MapUploadService {
     private static final String defaultPathToMaps= "./maps/";
-    
+    public static final  int typeMapCodding = 5;
     
     public RegionService regionService;
     public MapInfoService mapInfoService;
@@ -29,48 +32,71 @@ public class MapUploadService {
         this.mapInfoService = mapInfoService;
     }
     
-    public void checkMapsDirectory() throws IOException {
+    public void checkMapsDirectory() throws IOException, UnknownDbException {
         File mapsDir = new File(defaultPathToMaps);
         if ( !mapsDir.exists() || !mapsDir.isDirectory() ){
-            throw new IOException(MapUploadService.class + "Не существует директри с картами");
+            throw new IOException("No such directory with maps. Create 'maps' dir in root");
         }
         for (File item: Objects.requireNonNull(mapsDir.listFiles())){
             if (item.isDirectory()
-                && !regionService.hasInfo(item.getName())
                 && Objects.requireNonNull(item.listFiles()).length > 0){
-                AddNotesAboutMap(item);
+                try {
+                    AddNotesAboutRegion(item);
+                }catch (NoSuchValueException e){
+                    throw new UnknownDbException("Ошибка БД");
+                }
+                
             }
             
         }
     }
-    private void AddNotesAboutMap(File srcDir) throws IOException {
-        System.out.println(this.getClass() + ": Adding notes...");
-        double[][] latLongCoords = null;
-        Region region = new Region(srcDir.getName(),srcDir.getPath());
+    private void AddNotesAboutMap(Region region,File srcDir) throws IOException{
+        TypeMap typeMap = TypeMap.getTypeByName(srcDir.getName());
+        if (typeMap == null){
+            System.out.println("MapUploadService: Не удалось загрузить карту " + srcDir.getName()+": проверьте название");
+            return;
+        }
+        boolean has_info = region.getMapsInfo()
+                .stream()
+                .anyMatch((mapInfo) -> mapInfo.getType() == typeMap);
+        if (has_info){
+            System.out.println("MapUploadService: Карта " + srcDir.getName()+ " не загружена: запись о такой карте уже существует");
+            return;
+        }
+        GdalService gdalService = new GdalService(srcDir.getPath());
+        if (!region.isFilled()) {
+            double[][] latLongCoords = gdalService.getLatLongCoords();
+            region.setTopLat(latLongCoords[1][0]);
+            region.setBottomLat(latLongCoords[1][1]);
+            region.setLeftLong(latLongCoords[0][0]);
+            region.setRightLong(latLongCoords[0][1]);
+            //rows and cols
+            int[] size  = gdalService.getXYSize();
+            region.setRegionRows(size[1]);
+            region.setRegionCols(size[0]);
+            region.setTransform(gdalService.getTransform());
+            region.setCvType(typeMapCodding);
+            
+        }
+        MapInfo mapInfo =  new MapInfo(srcDir.getName(),typeMap);
+        region.addMapsInfo(mapInfo);
+        region.setFilled(true);
         
-        for (File item: Objects.requireNonNull(srcDir.listFiles())) {
-            TypeMap typeMap = TypeMap.getTypeByName(item.getName());
-            if (typeMap == null){
-                System.out.println(this.getClass() + ": Ошибка карта " + item.getName() + " не загружена");
-            }
-            GdalService gdalService = new GdalService(item.getPath());
-            if (latLongCoords == null){
-                latLongCoords = gdalService.getLatLongCoords();
-            }
-            double[] minMaxValue = gdalService.getMinMax(1);
-            MapInfo mapInfo =  new MapInfo(item.getName(),typeMap,minMaxValue[0],minMaxValue[1]);
-            region.addMapsInfo(mapInfo);
+    }
+    private void AddNotesAboutRegion(File srcDir) throws IOException, NoSuchValueException {
+        System.out.println(this.getClass() + ": Adding notes...");
+        
+        Region region;
+        if (regionService.hasInfo(srcDir.getName())){
+            region = regionService.getFullInfo(srcDir.getName());
+        } else {
+            region = new Region(srcDir.getName(),srcDir.getPath());
         }
         
-        region.setTopLat(latLongCoords[1][0]);
-        region.setBottomLat(latLongCoords[1][1]);
-        region.setLeftLong(latLongCoords[0][0]);
-        region.setRightLong(latLongCoords[0][1]);
+        for (File item: Objects.requireNonNull(srcDir.listFiles())) {
+            AddNotesAboutMap(region,item);
+        }
         regionService.save(region);
-        
-        
-        
-        
         
     }
     

@@ -1,37 +1,44 @@
 package com.RW.BiologicalProductivity.services.MapService.Deployment;
 
+import com.RW.BiologicalProductivity.services.DB.exceptions.DataBaseException;
+import com.RW.BiologicalProductivity.services.DB.exceptions.NoSuchValueException;
+import com.RW.BiologicalProductivity.services.DB.services.MapInfoService;
 import com.RW.BiologicalProductivity.services.DB.services.RegionService;
-import com.RW.BiologicalProductivity.services.MapService.Deployment.interfaces.MapDeployment;
-import com.RW.BiologicalProductivity.services.MapService.MapApiWithMapData;
-import com.RW.BiologicalProductivity.services.MapService.MapSector;
+import com.RW.BiologicalProductivity.services.MapService.*;
 import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
+import com.RW.BiologicalProductivity.services.MapService.interfaces.MapAPI;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class MapDeploymentParall extends MapDeployment {
-    private volatile MapApiWithMapData api;
+    private volatile MapApiDeployment api;
     private volatile Mat deployingMap;
     private volatile TypeMap typeMap;
     
-    public MapDeploymentParall(RegionService regionService, String regionName) {
-        super(regionService,regionName);
+    public MapDeploymentParall(RegionService regionService, MapInfoService mapInfoService, String regionName) throws NoSuchValueException {
+        super(regionService, mapInfoService, regionName);
     }
     
+    
+    //Handle Error
     @Override
-    public void deployMap(TypeMap typeMap) throws IOException, InterruptedException {
+    public void deployMap(TypeMap typeMap) throws IOException, InterruptedException, DataBaseException {
         checkInfo(typeMap);
         
-        this.api = new MapApiWithMapData(region.getName(),regionService);
+        this.api = new MapApiDeployment(new MapsManipWithMapData(
+                regionService.getMapsInfo(region.getName()),
+                rowSplit,
+                colSplit));
         this.deployingMap = new Mat(region.getRegionRows(), region.getRegionCols(), region.getCvType());
         this.typeMap = typeMap;
-        api.startAPI();
         
-        List<DeployTread> treads = new ArrayList<>(api.getNumberSectors());
-        for (int i = 0; i < api.getNumberSectors(); i++) {
+        List<DeployTread> treads = new ArrayList<>(getNumberSectors());
+        for (int i = 0; i < getNumberSectors(); i++) {
             treads.add(new DeployTread(this,i));
         }
         
@@ -40,6 +47,7 @@ public class MapDeploymentParall extends MapDeployment {
             tread.join();
         }
         writeDeployingMap(deployingMap,typeMap);
+        addNoteToDB(typeMap);
     }
     
     public void deploySector(int sectorId) throws IOException {

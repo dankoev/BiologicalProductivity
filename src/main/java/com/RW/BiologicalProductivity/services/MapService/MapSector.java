@@ -1,7 +1,10 @@
 package com.RW.BiologicalProductivity.services.MapService;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -22,7 +25,7 @@ public class MapSector {
     public int offsetCols;
     public int rows;
     public int cols;
-    public double[][] cornerCoords = new double[4][2]; //left-top, right-top,right-bottom,left-bottom
+    public double[][] cornerCoords = new double[2][2]; //left-top,right-bottom,
     public boolean hasNoData = true;
     public Mat data = new Mat();
 
@@ -48,24 +51,24 @@ public class MapSector {
     public MapSector() {
     }
     
-    public MapSector clone(){
+    public synchronized MapSector clone(){
         MapSector cloneSector =  new MapSector();
         cloneSector.setInitialData(id, offsetRows, offsetCols, rows, cols, cornerCoords, hasNoData);
         cloneSector.setMaxMinMapValue(maxMapValue, minMapValue);
-        cloneSector.data = this.data.clone();
+        cloneSector.data = this.data.clone();//????
         return cloneSector;
     }
     
     public Mat toHeatMap(){
-        double[] RGBWhite = {255,2555,255};
-        Scalar initialRGB = new Scalar(RGBWhite);
-        Mat newImg = new Mat(this.rows, this.cols, CvType.CV_8UC3, initialRGB);
+        Instant start = Instant.now();
+        
+        double[] RGBAClear = {0,0,0,0};
+        Mat newImg = new Mat(this.rows, this.cols, CvType.CV_8UC4, new Scalar(RGBAClear));
         double[] valueRGB;
         int lenPalitraHSV = palitraHSV.cols();
         for (int i = 0; i < this.data.rows(); i++) {
             for (int j = 0; j < this.data.cols() ; j++) {
                 if (this.data.get(i,j)[0] == noDataValue) {
-                    newImg.put(i, j, RGBWhite);
                     continue;
                 }
                 if (this.data.get(i,j)[0] > maxMapValue){
@@ -77,11 +80,17 @@ public class MapSector {
                 else{
                     valueRGB = palitraHSV.get(0,(int)((lenPalitraHSV-1) * (this.data.get(i,j)[0] - minMapValue)/(maxMapValue - minMapValue)));
                 }
-                newImg.put(i, j, valueRGB);
+                newImg.put(i, j, valueRGB[0],valueRGB[1],valueRGB[2], 255);
             }
         }
+        
+        Instant finish = Instant.now();
+        long elapsed = Duration.between(start, finish).toMillis();
+        System.out.println("Преобразование в тепловую карту , мс: " + elapsed);
         return newImg;
     }
+    
+    
     public static Mat createPalitraHSV(double c){
         double H = 0;
         double S = 0.78;

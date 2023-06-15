@@ -1,10 +1,9 @@
 package com.RW.BiologicalProductivity.config;
 
-import com.RW.BiologicalProductivity.services.DB.Repos.MapInfoRepo;
-import com.RW.BiologicalProductivity.services.DB.Repos.RegionRepo;
+import com.RW.BiologicalProductivity.services.DB.repos.MapInfoRepo;
+import com.RW.BiologicalProductivity.services.DB.repos.RegionRepo;
 import com.RW.BiologicalProductivity.services.DB.services.MapInfoService;
 import com.RW.BiologicalProductivity.services.DB.services.RegionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

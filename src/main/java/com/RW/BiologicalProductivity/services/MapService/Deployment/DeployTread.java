@@ -1,12 +1,5 @@
 package com.RW.BiologicalProductivity.services.MapService.Deployment;
 
-import com.RW.BiologicalProductivity.services.MapService.Deployment.interfaces.MapDeployment;
-import com.RW.BiologicalProductivity.services.MapService.MapSector;
-import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
-import com.RW.BiologicalProductivity.services.MapService.interfaces.MapAPI;
-import org.opencv.core.Mat;
-import org.opencv.core.Rect;
-
 import java.io.IOException;
 
 public class DeployTread extends Thread{

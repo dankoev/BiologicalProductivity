@@ -1,11 +1,15 @@
 package com.RW.BiologicalProductivity.services.MapService;
-import com.RW.BiologicalProductivity.services.DB.Entities.MapInfo;
+import com.RW.BiologicalProductivity.services.DB.entities.MapInfo;
+import com.RW.BiologicalProductivity.services.DB.exceptions.DataBaseException;
+import com.RW.BiologicalProductivity.services.DB.exceptions.NoSuchValueException;
 import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
 import com.RW.BiologicalProductivity.services.MapService.interfaces.MapsManipulation;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
+
 /**
  * Constructor with MapInfo classes */
 public class MapsManipWithMapInfo implements MapsManipulation {
@@ -22,31 +26,41 @@ public class MapsManipWithMapInfo implements MapsManipulation {
 
 
     
-    public MapsManipWithMapInfo(MapInfo InfoMapH, MapInfo InfoMapCFT, MapInfo InfoMapN, MapInfo InfoMapT, int rowSplit, int colSplit) {
-        this.InfoMapH = InfoMapH;
-        this.InfoMapCFT = InfoMapCFT;
-        this.InfoMapN = InfoMapN;
-        this.InfoMapT = InfoMapT;
+    public MapsManipWithMapInfo(List<MapInfo> mapsInfo, int rowSplit, int colSplit) throws DataBaseException {
+        try {
+            this.InfoMapH = getMapInfo(TypeMap.H,mapsInfo);
+            this.InfoMapCFT = getMapInfo(TypeMap.CFT,mapsInfo);
+            this.InfoMapN = getMapInfo(TypeMap.N,mapsInfo);
+            this.InfoMapT = getMapInfo(TypeMap.T,mapsInfo);
+        }catch (NoSuchValueException e){
+            throw new DataBaseException("Не удалось расчитать карты");
+        }
         this.rowSplit = rowSplit;
         this.colSplit = colSplit;
+    }
+    public static MapInfo getMapInfo(TypeMap typeMap, List<MapInfo> mapsInfo) throws NoSuchValueException {
+        return mapsInfo.stream()
+                .filter(info -> info.getType() == typeMap)
+                .findFirst()
+                .orElseThrow(() -> new NoSuchValueException("Нет карты: " + typeMap.name()));
     }
     @Override
     public MapSector  getSectorById(int sectorId, TypeMap typeMap) throws IOException {
         return switch (typeMap){
             case H -> {
-                MapData mapH = new MapData(InfoMapH,rowSplit,colSplit);
+                MapDataGrid mapH = new MapDataGrid(InfoMapH,rowSplit,colSplit);
                 yield mapH.getFillSector(sectorId);
             }
             case CFT -> {
-                MapData mapCFT = new MapData(InfoMapCFT,rowSplit,colSplit);
+                MapDataGrid mapCFT = new MapDataGrid(InfoMapCFT,rowSplit,colSplit);
                 yield mapCFT.getFillSector(sectorId);
             }
             case N -> {
-                MapData mapN = new MapData(InfoMapN,rowSplit,colSplit);
+                MapDataGrid mapN = new MapDataGrid(InfoMapN,rowSplit,colSplit);
                 yield mapN.getFillSector(sectorId);
             }
             case T -> {
-                MapData mapT = new MapData(InfoMapT,rowSplit,colSplit);
+                MapDataGrid mapT = new MapDataGrid(InfoMapT,rowSplit,colSplit);
                 yield mapT.getFillSector(sectorId);
             }
             case ZM -> {
