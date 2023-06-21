@@ -4,33 +4,51 @@
     <title>Карта</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script src="https://api-maps.yandex.ru/2.1/?apikey=00edbb4c-85c6-4375-8249-f0baae6a12c2&lang=ru_RU&coordorder=longlat" type="text/javascript"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script type="text/javascript" src="/map.js"></script>
-    <script type="text/javascript" src="/mapHandler.js"></script>
     <script type="text/javascript" src="/sector.js"></script>
+    
     <link href="/styles.css" rel="stylesheet" />
 <body>
+    
     <div class="container">
-        <div class="box-col">
-            <div class="box-row">
-                <div class="dox-col">
-                    <div id="map"></div>
-                    <div>
-                        <label> Координаты метки: </label> <br>
-                        <textarea id="placemarkCoords"> </textarea>
-                    </div>
+        <div id="map"></div>  
+        <div id="left-sizebar" class="sizebar">
+            <div  class="sizebar-content collapsed">
+                <div class="box-row" id="area-btns">
+                    <div class="main-btns"></div>
+                    <div class="optional-btns"></div>
                 </div>
-                <div class="dox-col">
-                    <h3>Sector information</h3>
-                    <button id="getHeatMap">Рассчитать карту </button>
-                    <button id="calculPolygon">Рассчитать область</button>
-                    <img id="imageContainer"></img>
+                <div id="heatmap-type" class="box-col">
+                    <label>
+                        <input type="radio" checked name="choiceMap" value="ZM">
+                        Теплоэнергетические ресурсы испарения
+                    </label>
+                    <label>
+                        <input type="radio" name="choiceMap" value="H">
+                        Суммарное увлажнение
+                    </label>
+                    <label>
+                        <input type="radio" name="choiceMap" value="SY">
+                        Ступень увлажнения
+                    </label>
+                    <label>
+                        <input type="radio"  name="choiceMap" value="BP">
+                        Биологическая продуктивность
+                    </label>
                 </div>
+                <div class="box-row">
+                    <button id="calculatePolygon"> Вычислить область</button>
+                    <div id="load-item"></div>
+                </div>
+                
+                
+            </div>
+            <div class="down-arrow">
+                <img src="imgs/down-arrow.png" alt="">
             </div>
         </div>
-        
-    </div>
-    
-    
+        <div id="message-window"></div>
+    </div>  
 </body>
+<script type="text/javascript" src="/interfaceController.js"></script>
 </html>

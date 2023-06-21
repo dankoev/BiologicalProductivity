@@ -58,37 +58,43 @@ public class SectorController {
 //                .body(data);
 //    }
     @PostMapping("/getHeatSector")
-    public ResponseEntity<Object> getHeatMapByPath(@RequestBody SectorRequest sectorRequest) throws IOException, NoSuchValueException {
-        Instant start = Instant.now();
-        double[][] sectorCoords = sectorRequest.getSectorCoords();
-        double[][] areaCoords = sectorRequest.getAreaCoords();
-        String type = sectorRequest.getType();
-        
-        if(sectorCoords == null) {
+    public ResponseEntity<Object> getHeatMapByPath(@RequestBody SectorRequest sectorRequest) {
+        try {
+            Instant start = Instant.now();
+            double[][] sectorCoords = sectorRequest.getSectorCoords();
+            double[][] areaCoords = sectorRequest.getAreaCoords();
+            String type = sectorRequest.getType();
+    
+            if(sectorCoords == null) {
+                return ResponseEntity.badRequest()
+                        .body("Not exist coordinates");
+            }
+            if(type == null) {
+                return ResponseEntity.badRequest()
+                        .body("Not exist map type ");
+            }
+    
+            MapApiImpl api = new MapApiImpl(regionService);
+            api.detectRegion(new double[]{0});
+            byte[] data;
+            if (areaCoords != null) {
+                data = api.getSectorAsBytes(sectorCoords, areaCoords, TypeMap.getTypeByName(type));
+            } else {
+                data = api.getSectorAsBytes(sectorCoords, TypeMap.getTypeByName(type));
+            }
+    
+            Instant finish = Instant.now();
+            long elapsed = Duration.between(start, finish).toMillis();
+            System.out.println("Общее время, мс: " + elapsed);
+    
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(data);
+            
+        } catch (Exception e){
             return ResponseEntity.badRequest()
-                    .body("Not exist coordinates");
-        }
-        if(type == null) {
-            return ResponseEntity.badRequest()
-                    .body("Not exist map type ");
+                    .body(e.getMessage());
         }
         
-        MapApiImpl api = new MapApiImpl(regionService);
-        api.detectRegion(new double[]{0});
-        byte[] data;
-        if (areaCoords != null) {
-            data = api.getSectorAsBytes(sectorCoords, areaCoords, TypeMap.getTypeByName(type));
-        } else {
-            data = api.getSectorAsBytes(sectorCoords, TypeMap.getTypeByName(type));
-        }
-        
-        Instant finish = Instant.now();
-        long elapsed = Duration.between(start, finish).toMillis();
-        System.out.println("Общее время, мс: " + elapsed);
-        
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(data);
     }
-
 }
