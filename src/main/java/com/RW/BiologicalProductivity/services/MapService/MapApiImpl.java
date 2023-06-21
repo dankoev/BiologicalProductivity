@@ -11,7 +11,9 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.io.EOFException;
 import java.io.IOException;
+import java.rmi.NoSuchObjectException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -20,10 +22,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class MapApiImpl implements MapAPI {
-    static{
-        nu.pattern.OpenCV.loadLocally();
-        System.out.println("Load library");
-    }
     private  Region region;
     private final RegionService regionService;
     
@@ -31,11 +29,32 @@ public class MapApiImpl implements MapAPI {
         this.regionService = regionService;
     }
     
-    public void detectRegion(double[] latLongs) throws NoSuchValueException {
-        this.region  = regionService.getInfo("region_1");
+    public void detectRegion(double[][] twoPoints) throws NoSuchValueException {
+        List<Region>  regions = regionService.getRegionsInfo();
+        Point firstPointArea = new Point(twoPoints[0][0],twoPoints[0][1]);
+        Point secondPointArea = new Point(twoPoints[1][0],twoPoints[1][1]);
+        regions.forEach( region -> {
+            boolean areaInsideRegion = pointInsideRegion(firstPointArea,region)
+                    && pointInsideRegion(secondPointArea, region);
+            if (areaInsideRegion){
+                this.region = region;
+                return;
+            }
+        });
+        throw new NoSuchValueException("Map API: The boundaries of the selected area go beyond the areas in which there is information");
+        
+    }
+    private boolean pointInsideRegion(Point point, Region region){
+        return !(point.x > region.getRightLong() || point.x < region.getLeftLong()
+                || point.y > region.getTopLat() || point.y < region.getBottomLat());
     }
     public byte[] getSectorAsBytes(double[][] twoPoints, TypeMap typeMap) throws IOException, NoSuchValueException {
-        String region_name = region.getName();
+        String region_name;
+        try {
+            region_name = region.getName();
+        } catch ( NullPointerException e){
+            throw new NoSuchObjectException("Map API: region not detected ");
+        }
         MapData mapData = new MapData(regionService.getMapInfo(region_name,typeMap));
         Mat sector = mapData
                 .getFillSector(twoPoints)

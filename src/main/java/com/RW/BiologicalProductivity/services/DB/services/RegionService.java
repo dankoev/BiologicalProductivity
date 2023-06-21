@@ -21,6 +21,9 @@ public class RegionService {
         return regionRepo.findByName(name)
                 .orElseThrow(() -> new NoSuchValueException("There is no region with this name"));
     }
+    public List<Region> getRegionsInfo(){
+        return regionRepo.findAll();
+    }
     @Transactional
     public Region getFullInfo(String name) throws NoSuchValueException {
         return regionRepo.findByName(name)

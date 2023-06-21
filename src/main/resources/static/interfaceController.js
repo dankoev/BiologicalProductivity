@@ -98,7 +98,7 @@ function showMessage(messageCont, messageType){
   if (messageType === 'error'){
     messageDiv.style.cssText = 'background-color: red'
   }
-  if (messageContent.length > 90){
+  if (messageContent.length > 120){
     message.textContent = "Too much error content. Check console"
     console.log(messageContent)
   } else {

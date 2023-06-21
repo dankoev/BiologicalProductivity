@@ -64,7 +64,7 @@ public class MapUploadService {
             return;
         }
         GdalService gdalService = new GdalService(srcDir.getPath());
-        if (!region.isFilled()) {
+        if (!region.isFilled() && TypeMap.isInitialMap(typeMap)) {
             double[][] latLongCoords = gdalService.getLatLongCoords();
             region.setTopLat(latLongCoords[1][0]);
             region.setBottomLat(latLongCoords[1][1]);

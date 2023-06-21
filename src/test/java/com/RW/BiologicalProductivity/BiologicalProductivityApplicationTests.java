@@ -39,30 +39,39 @@ class BiologicalProductivityApplicationTests {
 	@Autowired
 	MapInfoService mapInfoService;
 //
-//	@Test
-//	void test1()  {
-//		try{
-//			MapUploadService m = new MapUploadService(regionService,mapInfoService);
-//			m.checkMapsDirectory();
-//			List<TypeMap> typeMapList = new ArrayList<>();
-//			typeMapList.add(TypeMap.ZM);
-//			typeMapList.add(TypeMap.BetaH);
-//			MapDeployment mapDeployment = new MapDeploymentImpl(regionService,mapInfoService,"region_1");
-//			for (TypeMap typeMap : typeMapList) {
-//				try {
-//					mapDeployment.deployMap(typeMap);
-//				}catch (OverwriteAttemptException e){
-//					System.err.println(e.getMessage());
-//				}
-//			}
-//		}catch ( IOException  | DataBaseException e){
-//			System.err.println(e.getMessage());
-//		}catch (InterruptedException e){
-//			System.err.println("Program error: Error parallel deploy");
-//		}
-//
-//
-//	}
+	@Test
+	void moduleTest()  {
+		try{
+			MapUploadService m = new MapUploadService(regionService,mapInfoService);
+			m.checkMapsDirectory();
+		}catch ( IOException  | DataBaseException e){
+			System.err.println(e.getMessage());
+		}
+	}
+	@Test
+	void test1()  {
+		try{
+			MapUploadService m = new MapUploadService(regionService,mapInfoService);
+			m.checkMapsDirectory();
+			List<TypeMap> typeMapList = new ArrayList<>();
+			typeMapList.add(TypeMap.ZM);
+			typeMapList.add(TypeMap.BetaH);
+			MapDeployment mapDeployment = new MapDeploymentImpl(regionService,mapInfoService,"region_1");
+			for (TypeMap typeMap : typeMapList) {
+				try {
+					mapDeployment.deployMap(typeMap);
+				}catch (OverwriteAttemptException e){
+					System.err.println(e.getMessage());
+				}
+			}
+		}catch ( IOException  | DataBaseException e){
+			System.err.println(e.getMessage());
+		}catch (InterruptedException e){
+			System.err.println("Program error: Error parallel deploy");
+		}
+
+
+	}
 //	@Test
 //	void test3() throws IOException, DataBaseException {
 //		Instant start = Instant.now();
@@ -95,7 +104,9 @@ class BiologicalProductivityApplicationTests {
 		Instant start = Instant.now();
 		
 		MapApiImpl api = new MapApiImpl(regionService);
-		api.detectRegion(new double[]{0});
+		api.detectRegion(new double[][]{
+				{100.3918,56.3898},
+				{104.1271,54.9368}});
 		api.getSectorAsBytes(new double[][]{
 				{100.3918,56.3898},
 				{104.1271,54.9368}},TypeMap.BP);

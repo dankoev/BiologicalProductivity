@@ -16,6 +16,9 @@ public enum TypeMap {
         }
         return null;
     }
+    public static boolean isInitialMap(TypeMap typeMap){
+        return typeMap == H || typeMap == CFT || typeMap == N || typeMap == T;
+    }
     
 
 }

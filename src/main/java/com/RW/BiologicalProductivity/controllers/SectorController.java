@@ -23,6 +23,10 @@ import java.util.Optional;
 
 @RestController
 public class SectorController {
+    static{
+        nu.pattern.OpenCV.loadLocally();
+        System.out.println("Load library");
+    }
     @Autowired
     RegionService regionService;
     @Autowired
@@ -75,7 +79,7 @@ public class SectorController {
             }
     
             MapApiImpl api = new MapApiImpl(regionService);
-            api.detectRegion(new double[]{0});
+            api.detectRegion(sectorCoords);
             byte[] data;
             if (areaCoords != null) {
                 data = api.getSectorAsBytes(sectorCoords, areaCoords, TypeMap.getTypeByName(type));

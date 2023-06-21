@@ -71,7 +71,7 @@ public class GdalService {
     public double[][] getLatLongCoords(){
         double[] TLpoint = this.getGeoCoordByPixels (0, 0);
         double[] BRpoint = this.getGeoCoordByPixels (hDataset
-                .getRasterXSize(), hDataset.getRasterYSize());
+                .getRasterYSize(), hDataset.getRasterXSize());
         return new double[][] {{TLpoint[0],BRpoint[0]},{TLpoint[1],BRpoint[1]}};
     }
     
