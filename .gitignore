@@ -1,6 +1,7 @@
 HELP.md
 src/main/resources/static/index.html
 target/
+out/
 maps/
 sectors/
 !.mvn/wrapper/maven-wrapper.jar

@@ -3,9 +3,12 @@ package com.RW.BiologicalProductivity.services.MapService;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
@@ -31,9 +34,28 @@ public class MapSector {
 
     public double maxMapValue = noDataValue;
     public double minMapValue= noDataValue;
-    public void setInitialData (int id,int offsetRows,int offsetCols,
-                            int rows,int cols,double[][] cornerCoords,
-                            boolean hasNoData){
+    /**
+     * optional Sector Info
+     */
+    private double maxSectorValue = noDataValue;
+    private double minSectorValue = noDataValue;
+    private double averageSectorValue = noDataValue;
+    
+    public double getMaxSectorValue() {
+        return maxSectorValue;
+    }
+    
+    public double getMinSectorValue() {
+        return minSectorValue;
+    }
+    
+    public double getAverageSectorValue() {
+        return averageSectorValue;
+    }
+    
+    public void setInitialData (int id, int offsetRows, int offsetCols,
+                                int rows, int cols, double[][] cornerCoords,
+                                boolean hasNoData){
         this.id = id; 
         this.offsetRows = offsetRows; 
         this.offsetCols = offsetCols; 
@@ -58,7 +80,40 @@ public class MapSector {
         cloneSector.data = this.data.clone();//????
         return cloneSector;
     }
+    public boolean calculateOptionalInfo(){
+        Instant start = Instant.now();
+        if ((this.maxSectorValue != noDataValue
+                && this.minSectorValue != noDataValue
+                && this.averageSectorValue != noDataValue) || hasNoData){
+           return true;
+        }
+        if (data == null) {
+            return false;
+        }
+        float[] buf = new float[cols*rows];
     
+        data.get(0,0,buf);
+        DoubleStream stream = IntStream.range(0, buf.length)
+                .mapToDouble(i -> buf[i]);
+        DoubleSummaryStatistics statistics = stream.filter(val -> val != noDataValue)
+                .summaryStatistics();
+    
+        minSectorValue = statistics.getMin();
+        maxSectorValue = statistics.getMax();
+        averageSectorValue = statistics.getAverage();
+    
+        double format = 1E3;
+        minSectorValue = Math.round(minSectorValue*format)/format;
+        maxSectorValue = Math.round(maxSectorValue*format)/format;
+        averageSectorValue = Math.round(averageSectorValue*format)/format;
+        
+        Instant finish = Instant.now();
+        System.out.println("Время расчета SectorOptionalInfo "
+                + Duration.between(start,finish).toMillis());
+        
+        return true;
+        
+    }
     public Mat toHeatMap(){
         Instant start = Instant.now();
         

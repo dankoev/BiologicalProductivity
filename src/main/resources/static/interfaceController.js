@@ -8,12 +8,33 @@ const loadState = {
   hide: 'hide'
 }
 let mapController = undefined
+let mapTemplates = {}
 
-function init() {
-  mapController = new YMapController('map', [107.88, 54.99])
-  controlAreaStates(mapController)
+function cteateBallonTemplate(){
+  mapTemplates.balloonContentLayout = ymaps.templateLayoutFactory.createClass(
+    `<div>
+      <p id="max"> Max: {{ properties.maxAreaValue|default:"No date" }} </p>
+      <p id="min"> Min: {{ properties.minAreaValue|default:"No date" }} </p>
+      <p id="average">Average: {{ properties.averageAreaValue|default:"No date" }} </p>
+      <button id="delete"> Удалить </button>
+    </div>`, {
+    build: function () {
+        mapTemplates.balloonContentLayout.superclass.build.call(this)
+        document.querySelector('#delete').onclick = this.delete      
+    },
 
+    clear: function () {
+
+      document.querySelector('#delete').removeEventListener('click',this.delete)
+      mapTemplates.balloonContentLayout.superclass.clear.call(this)
+    },
+    delete: () =>{
+      console.log(this)
+    },
+  })
 }
+
+
 function controlAreaStates(mapController){
   const addCompleteBtn = (targetBtn, targetAction) => {
     targetBtn.disabled = true
@@ -121,6 +142,12 @@ function setLoadState(loadState){
     loadItem.style.display = 'none'
   }
   
+}
+function init() {
+  mapController = new YMapController('map', [107.88, 54.99])
+  cteateBallonTemplate()
+  controlAreaStates(mapController)
+
 }
 
 createArrow()

@@ -90,8 +90,8 @@ class BiologicalProductivityApplicationTests {
 		Instant start = Instant.now();
 
 		MapDeployment mapDeployment = new MapDeploymentParall(regionService,mapInfoService,"region_1");
-		mapDeployment.setColSplit(14);
-		mapDeployment.setRowSplit(14);
+		mapDeployment.setColSplit(10);
+		mapDeployment.setRowSplit(10);
 		mapDeployment.deployMap(TypeMap.BP);
 		
 		Instant finish = Instant.now();

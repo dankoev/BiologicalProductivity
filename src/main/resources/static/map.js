@@ -2,31 +2,7 @@ class YMapController {
   constructor(name, centerCoords) {
     this.zoom = 5;
 
-    var BalloonContentLayout = ymaps.templateLayoutFactory.createClass(
-      `<div>
-      <button id="delete">Удалить</button>
-      <button id="edit">Редактировать</button>
-      </div>`, {
-      build: function () {
-          BalloonContentLayout.superclass.build.call(this);
-          document.querySelector('#delete').onclick = this.delete;
-          document.querySelector('#edit').onclick = this.edit;
-          
-      },
-
-      clear: function () {
-        document.querySelector('#delete').removeEventListener('click',this.delete)
-        document.querySelector('#edit').removeEventListener('click',this.edit)
-        BalloonContentLayout.superclass.clear.call(this);
-      },
-      delete: () => {
-        this.setSelectState('delete');
-      },
-      edit: () => {
-        this.setSelectState('edit');
-       console.log()
-      }
-    });
+    
 
     var map = new ymaps.Map(
       name,

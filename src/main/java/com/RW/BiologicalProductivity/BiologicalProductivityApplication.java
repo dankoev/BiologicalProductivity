@@ -8,7 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import javax.annotation.PostConstruct;
 
 @SpringBootApplication
-public class BiologicalProductivityApplication {
+public class
+BiologicalProductivityApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BiologicalProductivityApplication.class, args);
 	}

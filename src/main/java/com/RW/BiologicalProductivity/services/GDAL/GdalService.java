@@ -98,7 +98,7 @@ public class GdalService {
                 .mapToDouble(i -> buf[i]);
         DoubleSummaryStatistics statistics = stream.filter(val -> val != noDataVal)
                 .summaryStatistics();
-        
+
         double min = statistics.getMin();
         double max = statistics.getMax();
         double  average = statistics.getAverage();
@@ -109,7 +109,7 @@ public class GdalService {
                 .filter(val -> val != noDataVal)
                 .map(val -> Math.pow((val - finalAverage),2))
                 .sum() / count);
-     
+
         double format = 1E4;
         min = Math.round(min*format)/format;
         max = Math.round(max*format)/format;
@@ -118,7 +118,7 @@ public class GdalService {
         
         Driver driver = gdal.GetDriverByName("GTiff");
         Dataset ds = driver.Create(path,
-                map.cols(),map.rows(), 1, gdalconstConstants.GDT_Float32);
+                cols,rows, 1, gdalconstConstants.GDT_Float32);
         SpatialReference src = new SpatialReference();
         src.ImportFromEPSG(4326);
         ds.SetProjection(src.ExportToWkt());
@@ -129,7 +129,7 @@ public class GdalService {
         out.SetStatistics(min,max,average,stddev);
         out.SetNoDataValue(noDataVal);
         
-        int hasWrote= out.WriteRaster(0,0,map.cols(),map.rows(),buf);
+        int hasWrote = out.WriteRaster(0,0,cols,rows,buf);
         out.FlushCache();
         out.delete();
         return hasWrote;
