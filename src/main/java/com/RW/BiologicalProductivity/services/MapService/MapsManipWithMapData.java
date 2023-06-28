@@ -47,21 +47,21 @@ public class MapsManipWithMapData implements MapsManipulation {
                 MapSector sectorT = getSectorById(sectorId,TypeMap.T);
                 MapSector sectorCFT = getSectorById(sectorId,TypeMap.CFT);
                 MapSector sectorZM = calculateFormula(sectorT,sectorCFT,1);
-                sectorZM.setMaxMinMapValue(820,71);
+//                sectorZM.setMaxMinMapValue(820,71);
                 yield sectorZM;
             }
             case BetaH -> {
                 MapSector sectorZM = getSectorById(sectorId,TypeMap.ZM);
                 MapSector sectorH = getSectorById(sectorId,TypeMap.H);
                 MapSector sectorBetaH = calculateFormula(sectorH,sectorZM,2);
-                sectorBetaH.setMaxMinMapValue(8,0);
+//                sectorBetaH.setMaxMinMapValue(8,0);
                 yield sectorBetaH;
             }
             case SY -> {
                 MapSector sectorBetaH = getSectorById(sectorId,TypeMap.BetaH);
                 MapSector sectorN = getSectorById(sectorId,TypeMap.N);
                 MapSector sectorSY = calculateFormula(sectorBetaH,sectorN,3);
-                sectorSY.setMaxMinMapValue(120,22);
+//                sectorSY.setMaxMinMapValue(120,22);
                 yield sectorSY;
             }
             case BP -> {
@@ -70,7 +70,7 @@ public class MapsManipWithMapData implements MapsManipulation {
                 MapSector sectorSY = getSectorById(sectorId,TypeMap.SY);
                 MapSector sectorTemp = calculateFormula(sectorSY,sectorCFT,4);
                 MapSector sectorBP = calculateFormula(sectorTemp,sectorT,5);
-                sectorBP.setMaxMinMapValue(10,0);
+//                sectorBP.setMaxMinMapValue(10,0);
                 yield sectorBP;
             }
         };

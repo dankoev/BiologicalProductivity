@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <title>Карта</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script src="https://api-maps.yandex.ru/2.1/?apikey=00edbb4c-85c6-4375-8249-f0baae6a12c2&lang=ru_RU&coordorder=longlat" type="text/javascript"></script>
+    <script
+        src="https://api-maps.yandex.ru/2.1/?apikey=00edbb4c-85c6-4375-8249-f0baae6a12c2&lang=ru_RU&coordorder=longlat"
+        type="text/javascript"></script>
     <script type="text/javascript" src="/map.js"></script>
     <script type="text/javascript" src="/sector.js"></script>
-    
+
     <link href="/styles.css" rel="stylesheet" />
+
 <body>
-    
+
     <div class="container">
-        <div id="map"></div>  
+        <div id="map"></div>
         <div id="left-sizebar" class="sizebar">
-            <div  class="sizebar-content collapsed">
-                <div class="box-row" id="area-btns">
+            <div class="sizebar-content collapsed">
+                <div id="control-box" class="box-row">
                     <div class="main-btns"></div>
                     <div class="optional-btns"></div>
                 </div>
-                <div id="heatmap-type" class="box-col">
+                <div id="heatmap-types" class="box-col">
                     <label>
                         <input type="radio" checked name="choiceMap" value="ZM">
                         Теплоэнергетические ресурсы испарения
@@ -32,7 +36,7 @@
                         Ступень увлажнения
                     </label>
                     <label>
-                        <input type="radio"  name="choiceMap" value="BP">
+                        <input type="radio" name="choiceMap" value="BP">
                         Биологическая продуктивность
                     </label>
                 </div>
@@ -40,15 +44,24 @@
                     <button id="calculatePolygon"> Вычислить область</button>
                     <div id="load-item"></div>
                 </div>
-                
-                
             </div>
             <div class="down-arrow">
                 <img src="imgs/down-arrow.png" alt="">
             </div>
         </div>
         <div id="message-window"></div>
-    </div>  
+        <div id="heatmap-scale">
+            <div class="scale"></div>
+            <div class="signature"></div>
+        </div>
+        <div id="layer-controller">
+            <button class="type-title">Слои карт</button>
+            <div hidden class="list-types">
+                <h4>Отображаемые карты:</h4>
+            </div>
+        </div>
+    </div>
 </body>
 <script type="text/javascript" src="/interfaceController.js"></script>
+
 </html>

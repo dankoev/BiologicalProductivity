@@ -147,6 +147,9 @@ public class MapSector {
         return newImg;
     }
     
+    public double[] getMaxMinMapValue() {
+        return new double[]{maxMapValue, minMapValue};
+    }
     
     public static Mat createPalitraHSV(double c){
         double H = 0;

@@ -32,18 +32,18 @@ public class SectorController {
     MapApiImpl mapApi;
     
     
-    @GetMapping(value = "/getLastSectorInfo")
-    public ResponseEntity<byte[]> getLastSectorInfo(){
+    @GetMapping(value = "/getLastSectorStatistics")
+    public ResponseEntity<byte[]> getLastSectorStatistics(){
         MapSector curSector = mapApi.getCurrentSector();
-        SectorInfoRequest info = new SectorInfoRequest(curSector);
+        SectorStatisticsResponse info = new SectorStatisticsResponse(curSector);
         Gson gson = new Gson();
-        byte[] data = gson.toJson(info,SectorInfoRequest.class).getBytes();
+        byte[] data = gson.toJson(info, SectorStatisticsResponse.class).getBytes();
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(data);
     }
-    @PostMapping("/getHeatSector")
-    public ResponseEntity<Object> getHeatMapByPath(@RequestBody SectorRequest sectorRequest) {
+    @PostMapping("/getHeatMapOfSector")
+    public ResponseEntity<Object> getHeatMapOfSector(@RequestBody SectorRequest sectorRequest) {
         try {
             Instant start = Instant.now();
             double[][] sectorCoords = sectorRequest.getSectorCoords();

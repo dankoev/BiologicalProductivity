@@ -1,22 +1,14 @@
 class YMapController {
   constructor(name, centerCoords) {
-    this.zoom = 5;
-
-    
-
-    var map = new ymaps.Map(
+    this.zoom = 5
+    this.map = new ymaps.Map(
       name,
       {
         center: centerCoords,
         zoom: this.zoom,
         controls: [ 'typeSelector'],
-      }),
-      BalloonContentLayout;
-    this.balloonContentLayout = BalloonContentLayout
-    this.map = map
-
+      })
   }
-  
 
   setSelectState(state) {
     switch (state){

@@ -38,40 +38,59 @@ class BiologicalProductivityApplicationTests {
 	RegionService regionService;
 	@Autowired
 	MapInfoService mapInfoService;
+	@Autowired
+	MapApiImpl mapApi;
+	@Test
+	void uploadServiceTest()  {
+		System.out.println("START: uploadServiceTest");
+		try{
+			MapUploadService m = new MapUploadService(regionService,mapInfoService);
+			m.checkMapsDirectory();
+		}catch ( IOException  | DataBaseException e){
+			System.err.println(e.getMessage());
+		}
+	}
+	@Test
+	void getHeatMapTest()  {
+		System.out.println("START: getHeatMapTest");
+		try{
+			double[][] sectorCoords = new double[][]{
+						{100.3918,56.3898},
+						{104.1271,54.9368}};
+			double[][] areaCoords = new double[][]{
+					{102.3918,55.4},
+                         {104.1271,56.0},
+                         {103.1271,55.0}};
+			mapApi.detectRegion(sectorCoords);
+			byte[] data = mapApi.getSectorAsBytes(sectorCoords,areaCoords, TypeMap.getTypeByName("H"));
+		}catch ( IOException  | DataBaseException e){
+			System.err.println(e.getMessage());
+		}
+	}
+//	@Test
+//	void test1()  {
+//		try{
+//			MapUploadService m = new MapUploadService(regionService,mapInfoService);
+//			m.checkMapsDirectory();
+//			List<TypeMap> typeMapList = new ArrayList<>();
+//			typeMapList.add(TypeMap.ZM);
+//			typeMapList.add(TypeMap.BetaH);
+//			MapDeployment mapDeployment = new MapDeploymentImpl(regionService,mapInfoService,"region_1");
+//			for (TypeMap typeMap : typeMapList) {
+//				try {
+//					mapDeployment.deployMap(typeMap);
+//				}catch (OverwriteAttemptException e){
+//					System.err.println(e.getMessage());
+//				}
+//			}
+//		}catch ( IOException  | DataBaseException e){
+//			System.err.println(e.getMessage());
+//		}catch (InterruptedException e){
+//			System.err.println("Program error: Error parallel deploy");
+//		}
 //
-	@Test
-	void moduleTest()  {
-		try{
-			MapUploadService m = new MapUploadService(regionService,mapInfoService);
-			m.checkMapsDirectory();
-		}catch ( IOException  | DataBaseException e){
-			System.err.println(e.getMessage());
-		}
-	}
-	@Test
-	void test1()  {
-		try{
-			MapUploadService m = new MapUploadService(regionService,mapInfoService);
-			m.checkMapsDirectory();
-			List<TypeMap> typeMapList = new ArrayList<>();
-			typeMapList.add(TypeMap.ZM);
-			typeMapList.add(TypeMap.BetaH);
-			MapDeployment mapDeployment = new MapDeploymentImpl(regionService,mapInfoService,"region_1");
-			for (TypeMap typeMap : typeMapList) {
-				try {
-					mapDeployment.deployMap(typeMap);
-				}catch (OverwriteAttemptException e){
-					System.err.println(e.getMessage());
-				}
-			}
-		}catch ( IOException  | DataBaseException e){
-			System.err.println(e.getMessage());
-		}catch (InterruptedException e){
-			System.err.println("Program error: Error parallel deploy");
-		}
-
-
-	}
+//
+//	}
 //	@Test
 //	void test3() throws IOException, DataBaseException {
 //		Instant start = Instant.now();
@@ -85,54 +104,54 @@ class BiologicalProductivityApplicationTests {
 ////		Imgcodecs.imwrite("./sectors/mfd.jpeg",im1);
 //	}
 //
-	@Test
-	void test5() throws IOException, InterruptedException, DataBaseException {
-		Instant start = Instant.now();
+//	@Test
+//	void test5() throws IOException, InterruptedException, DataBaseException {
+//		Instant start = Instant.now();
+//
+//		MapDeployment mapDeployment = new MapDeploymentParall(regionService,mapInfoService,"region_1");
+//		mapDeployment.setColSplit(10);
+//		mapDeployment.setRowSplit(10);
+//		mapDeployment.deployMap(TypeMap.BP);
+//
+//		Instant finish = Instant.now();
+//		System.out.println("Oбщее время выполнения "
+//				+ Duration.between(start,finish).toMillis());
+//	}
 
-		MapDeployment mapDeployment = new MapDeploymentParall(regionService,mapInfoService,"region_1");
-		mapDeployment.setColSplit(10);
-		mapDeployment.setRowSplit(10);
-		mapDeployment.deployMap(TypeMap.BP);
-		
-		Instant finish = Instant.now();
-		System.out.println("Oбщее время выполнения "
-				+ Duration.between(start,finish).toMillis());
-	}
-
-	@Test
-	void test2() throws IOException, InterruptedException, DataBaseException {
-		Instant start = Instant.now();
-		
-		MapApiImpl api = new MapApiImpl(regionService);
-		api.detectRegion(new double[][]{
-				{100.3918,56.3898},
-				{104.1271,54.9368}});
-		api.getSectorAsBytes(new double[][]{
-				{100.3918,56.3898},
-				{104.1271,54.9368}},TypeMap.BP);
-		
-		
-		Instant finish = Instant.now();
-		long elapsed = Duration.between(start, finish).toMillis();
-		System.out.println("Прошло времени, мс: " + elapsed);
-	}
-	@Test
-	void test() throws IOException, InterruptedException, DataBaseException {
-		Instant start = Instant.now();
-		
-		MapData mapData = new MapData(regionService.getMapInfo("region_1",TypeMap.BP));
-		Instant finish = Instant.now();
-		long elapsed = Duration.between(start, finish).toMillis();
-		System.out.println("Прошло времени, мс: " + elapsed);
-		
-		Mat sector = mapData
-				.getFillSector(new double[][]{
-						{100.3918,56.3898},
-						{104.1271,54.9368}})
-				.data;
-		
-	
-	}
+//	@Test
+//	void test2() throws IOException, InterruptedException, DataBaseException {
+//		Instant start = Instant.now();
+//
+//		MapApiImpl api = new MapApiImpl(regionService);
+//		api.detectRegion(new double[][]{
+//				{100.3918,56.3898},
+//				{104.1271,54.9368}});
+//		api.getSectorAsBytes(new double[][]{
+//				{100.3918,56.3898},
+//				{104.1271,54.9368}},TypeMap.BP);
+//
+//
+//		Instant finish = Instant.now();
+//		long elapsed = Duration.between(start, finish).toMillis();
+//		System.out.println("Прошло времени, мс: " + elapsed);
+//	}
+//	@Test
+//	void test() throws IOException, InterruptedException, DataBaseException {
+//		Instant start = Instant.now();
+//
+//		MapData mapData = new MapData(regionService.getMapInfo("region_1",TypeMap.BP));
+//		Instant finish = Instant.now();
+//		long elapsed = Duration.between(start, finish).toMillis();
+//		System.out.println("Прошло времени, мс: " + elapsed);
+//
+//		Mat sector = mapData
+//				.getFillSector(new double[][]{
+//						{100.3918,56.3898},
+//						{104.1271,54.9368}})
+//				.data;
+//
+//
+//	}
 
 	
 }
