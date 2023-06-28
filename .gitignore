@@ -1,5 +1,5 @@
 HELP.md
-sectors/
+src/main/resources/static/index.html
 target/
 maps/
 !.mvn/wrapper/maven-wrapper.jar

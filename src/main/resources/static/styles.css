@@ -1,52 +1,214 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
 body {
     background-color: rgba(255, 255, 255, 0.863);
     color: #0f141e;
-
-    font-size: 16px;
+    width: auto;
+    height: auto;
+    overflow: hidden;
+    font-size: 14px;
     font-weight: normal;
     font-family: 'Roboto', sans-serif;
 }
 
 .container {
-    width: 95%;
-    height: auto;
-    margin: 10px;
-    display: flex;
+    width: 100%;
+    height: 100vh;
 }
 
-.box-col{
-    width: auto;
-    display: flex;
-    flex-direction: column;
-    padding: 5px;
-    margin-bottom: 10px;
-}
-.box-col > div{
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    display: flex;
+.collapsed {
+    height: 0;
+    overflow: hidden;
 }
 
-.box-row{
+.box-row {
     display: flex;
     flex-direction: row;
+    padding: 2px;
+    margin: 2px;
 
 }
-.box-row > div{
-    margin-right: 10px;
-    border-style: none;
-    box-sizing: border-box;
-    /* text-align: center; */
+
+.box-col {
+    display: flex;
+    flex-direction: column;
+    padding: 2px;
+
+}
+
+.main-btns {
+    width: 170px;
+}
+
+.sizebar {
+    padding: 5px;
+    margin: 5px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    opacity: 0.8;
+    background-color: #ffffff;
+}
+
+.sizebar-content {
+    transition: height 10s ease;
+    width: 300px;
+}
+
+.down-arrow {
+    height: 20px;
+    width: 100%;
+}
+
+.down-arrow img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: auto;
+    width: 20px;
+
+}
+
+.img-flip {
+    transform: rotate(180deg);
+}
+
+.smooth-hide {
+    opacity: 1;
+    transition: opacity 3s;
+}
+
+div.smooth-hide {
+    opacity: 0;
 }
 
 #map {
-    width: 800px;
-    height: 500px;
-    border: 1px solid black;
-    margin: 0;
-    padding: 2px;
+    width: 100%;
+    height: 100%;
+    position: absolute;
     overflow: hidden;
 }
+
+#heatMapType {
+    margin: 5px;
+    padding: 10px;
+    border: solid;
+    border-color: aqua;
+    border-radius: 5px;
+    border-width: 1px;
+}
+
+#message-window {
+    min-height: 20px;
+    width: 400px;
+    position: absolute;
+    top: 5px;
+    left: 500px;
+
+}
+
+#message-window div {
+    padding: 2px;
+    margin-bottom: 5px;
+    padding-left: 6px;
+    padding-right: 6px;
+    border-radius: 4px;
+
+    /* animation: fadeOut 5s; */
+
+}
+
+#load-item {
+    display: none;
+    border: 5px solid #cae1bc;
+    border-top: 5px solid #1111ad;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    ;
+    margin: 5px;
+    animation: spin 2s linear infinite;
+}
+
+#heatmap-scale {
+    height: 200px;
+    width: 50px;
+    border: solid;
+    background: linear-gradient(blue, rgb(205, 255, 192));
+    position: absolute;
+    right: 10px;
+    top: 100px;
+
+}
+
+#layer-controller {
+    position: absolute;
+    left: 330px;
+    top: 5px;
+    padding: 0px;
+    text-align: start;
+    width: 100px;
+    opacity: 0.8;
+}
+
+#layer-controller .list-types {
+    padding-left: 20px;
+    width: 200px;
+    background-color: #b2e3ef;
+    margin-top: 5px;
+    border-radius: 10px;
+    opacity: 0.9;
+}
+
+#layer-controller div {
+    margin: 3px;
+    white-space: nowrap;
+    list-style-type: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+#layer-controller button {
+    background-color: #fff;
+    color: #0f141e;
+}
+
+#layer-controller button:hover {
+    background-color: #61abef;
+    color: #0f141e;
+}
+
+#layer-controller .filter-type.selected+label::before {
+    position: absolute;
+    left: 4px;
+    color: rgb(7, 56, 7);
+    content: "✔";
+}
+
+button {
+    background: rgb(40, 13, 165);
+    padding: 7px;
+    margin: 1px;
+    height: 30px;
+    width: auto;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: normal;
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.5);
+}
+
+button:hover {
+    /* color: #a2e898; */
+    background: rgb(95, 74, 187);
+}
+
 textarea {
     padding: 5px;
     width: 300px;
@@ -58,5 +220,21 @@ textarea {
     font-size: 16px;
     font-weight: normal;
     font-family: 'Roboto', sans-serif;
+
 }
 
+@media screen and (width: 1000px) {
+    #heatmap-scale {
+        top: 200px;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
