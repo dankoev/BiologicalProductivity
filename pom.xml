@@ -68,18 +68,18 @@
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>com.gdal</groupId>
-			<artifactId>gdal</artifactId>
-			<version>3.6.0</version>
-			<scope>system</scope>
- 			<systemPath>${env.GDAL_JAR}/gdal.jar</systemPath>
-		</dependency>
 <!--		<dependency>-->
 <!--			<groupId>org.gdal</groupId>-->
 <!--			<artifactId>gdal</artifactId>-->
-<!--			<version>1.11.2</version>-->
+<!--			<version>1.0</version>-->
+<!--			<scope>system</scope>-->
+<!-- 			<systemPath>${env.GDAL_JAR}/gdal.jar</systemPath>-->
 <!--		</dependency>-->
+		<dependency>
+			<groupId>org.gdal</groupId>
+			<artifactId>gdal</artifactId>
+			<version>3.4.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>

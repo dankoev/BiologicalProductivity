@@ -23,17 +23,19 @@ public class MapSector {
         palitraHSV = createPalitraHSV(kPalitra);
     }
 
-    public int id;
+    
     public int offsetRows;
     public int offsetCols;
     public int rows;
     public int cols;
-    public double[][] cornerCoords = new double[2][2]; //left-top,right-bottom,
-    public boolean hasNoData = true;
     public Mat data = new Mat();
-
-    public double maxMapValue = noDataValue;
-    public double minMapValue= noDataValue;
+    public boolean hasNoData = true;
+    
+    private int id;
+    private double[][] cornerCoords = new double[2][2]; //left-top,right-bottom,
+    
+    private double maxMapValue = noDataValue;
+    private double minMapValue= noDataValue;
     /**
      * optional Sector Info
      */
@@ -77,7 +79,7 @@ public class MapSector {
         MapSector cloneSector =  new MapSector();
         cloneSector.setInitialData(id, offsetRows, offsetCols, rows, cols, cornerCoords, hasNoData);
         cloneSector.setMaxMinMapValue(maxMapValue, minMapValue);
-        cloneSector.data = this.data.clone();//????
+        cloneSector.data = this.data.clone();
         return cloneSector;
     }
     public boolean calculateOptionalInfo(){

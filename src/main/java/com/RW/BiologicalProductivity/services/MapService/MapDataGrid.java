@@ -17,7 +17,7 @@ public class MapDataGrid extends MapData {
     
     private int rowSplit = 8;
     private int colSplit = 8;
-    public List<MapSector> sectors = new ArrayList<>();
+    private final List<MapSector> sectors = new ArrayList<>();
     
     public MapDataGrid(MapInfo mapInfo,
                        int rowSplit,
