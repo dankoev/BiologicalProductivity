@@ -39,7 +39,12 @@ class YMapController {
     console.log(this.selectedArea.geometry.getCoordinates())
     return this.selectedArea.geometry.getCoordinates()[0].length > 1
   }
+  showPoligonsWithTypes() {
+    
+  }
+  hidePoligonsWithTypes() {
 
+  }
 
 }
 

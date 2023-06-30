@@ -83,7 +83,10 @@ body {
 
 div.smooth-hide {
     opacity: 0;
-}
+}   
+
+
+
 
 #map {
     width: 100%;
@@ -128,19 +131,47 @@ div.smooth-hide {
     border-radius: 50%;
     width: 15px;
     height: 15px;
-    ;
     margin: 5px;
     animation: spin 2s linear infinite;
 }
 
 #heatmap-scale {
-    height: 200px;
-    width: 50px;
-    border: solid;
-    background: linear-gradient(blue, rgb(205, 255, 192));
     position: absolute;
+    height: 215px;
+    width: 60px;
     right: 10px;
-    top: 100px;
+    top: 200px;
+    display: flex;
+    flex-direction: row;
+    background-color: rgb(247, 247, 178);
+    border-radius: 10px;
+    opacity: 0.8;
+    padding: 5px;
+    
+    
+}
+#heatmap-scale div.scale img {
+    transform: rotate(-90deg);
+    position: absolute;
+    top: 90px;
+    left: -90px;
+    width: 200px;
+    height: 20px;
+}
+#heatmap-scale div.scale  {
+    width: 70%;
+    height: 200px;
+    position: relative;
+    align-self: center;
+
+}
+#heatmap-scale div.signature { 
+    margin:0 5px;
+    width: 30%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 50% auto 15px;
+    align-items: baseline;
 
 }
 
