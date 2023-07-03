@@ -76,11 +76,12 @@ public class MapUploadService {
             region.setRegionCols(size[0]);
             region.setTransform(gdalService.getTransform());
             region.setCvType(typeMapCodding);
+            region.setFilled(true);
             
         }
         MapInfo mapInfo =  new MapInfo(srcDir.getName(),typeMap);
         region.addMapsInfo(mapInfo);
-        region.setFilled(true);
+        
         
     }
     private void AddNotesAboutRegion(File srcDir) throws IOException, NoSuchValueException {
