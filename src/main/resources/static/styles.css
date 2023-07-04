@@ -219,6 +219,11 @@ div.smooth-hide {
     color: rgb(7, 56, 7);
     content: "✔";
 }
+#load-kml-container {
+    position: absolute;
+    left: 4px;
+    top: 200px;
+}
 
 button {
     background: rgb(40, 13, 165);
