@@ -25,7 +25,7 @@ async function createPolyWithSector(blobURL, sectorCoords, sectorType) {
       opacity: 0.8,
     },
   )
-  leftSizebar.querySelector('#control-box .delete-btn').click()
+  // leftSizebar.querySelector('#control-box .delete-btn').click()
   mapController.map.geoObjects.add(poly)
   return poly
 }
@@ -80,17 +80,22 @@ async function getLastSectorStatistics() {
 document.addEventListener('DOMContentLoaded', () => {
   let leftSizebar = document.querySelector('#left-sizebar')
   leftSizebar.querySelector('#calculatePolygon').onclick = () => {
+    const transformArrayCoords = (coords) => {
+      return coords.map(el => [el[0], el[1]])
+    }
+
     const sectorCoords = mapController.selectedArea.geometry.getBounds()
     const areaCoords = mapController.selectedArea.geometry.getCoordinates()[0]
+    const areaCoordsTransform = transformArrayCoords(areaCoords)
+
     const heatMapType = leftSizebar.querySelector('#heatmap-types input[name="choiceMap"]:checked')
     setLoadState(loadState.show)
-    createAndShowArea(
-      {
-        sectorCoords,
-        type: heatMapType.value,
-        areaCoords
-      }
-    )
+    createAndShowArea({
+      sectorCoords,
+      type: heatMapType.value,
+      areaCoords: areaCoordsTransform,
+    })
   }
+
 })
 
