@@ -33,7 +33,7 @@ function cteateBallonTemplate() {
   })
 }
 
-function createLayerControler() {
+function createLayerController() {
 
   const layerController = document.querySelector('#layer-controller')
   const typeSelectBtn = layerController.querySelector('.type-title')
@@ -45,10 +45,21 @@ function createLayerControler() {
   addListTypes(layerController)
 
 }
+function setLayerType(type) {
+  const typeList = document.querySelector('#layer-controller .list-types')
+    .getElementsByTagName('input')
+  for (const inputWithType of typeList) {
+    if (inputWithType.id === type) {
+      inputWithType.checked = true;
+      break;
+    }
+  }
+
+
+}
 function addListTypes(layerController) {
-  const actionSelectionType = function () {
-    this.classList.toggle('selected')
-    console.log(this)
+  const actionSelectionType = function (e) {
+    mapController.showOrHidePoligonsOnTypes(e.target.id)
   }
   const srcLabelsOfTypes = document.querySelector('#heatmap-types')
     .getElementsByTagName('label')
@@ -57,10 +68,8 @@ function addListTypes(layerController) {
   const createTypeElement = (srcLabel) => {
     const dstInput = document.createElement('input')
     dstInput.id = srcLabel.control.value
-    dstInput.type = 'checkbox'
-    dstInput.hidden = true;
-    dstInput.classList.add('selected')
-    dstInput.classList.add('filter-type')
+    dstInput.type = 'radio'
+    dstInput.name = 'heatmap-type'
     dstInput.addEventListener('click', actionSelectionType)
 
     const dstLabel = document.createElement('label')
@@ -192,7 +201,7 @@ function setLoadState(loadState) {
 }
 function init() {
   createArrow()
-  createLayerControler()
+  createLayerController()
   mapController = new YMapController('map', [107.88, 54.99])
   cteateBallonTemplate()
   controlAreaStates(mapController)

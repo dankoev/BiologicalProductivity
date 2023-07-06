@@ -25,7 +25,8 @@ async function createPolyWithSector(blobURL, sectorCoords, sectorType) {
       opacity: 0.8,
     },
   )
-  // leftSizebar.querySelector('#control-box .delete-btn').click()
+  setLayerType(sectorType)
+  mapController.showOrHidePoligonsOnTypes(sectorType)
   mapController.map.geoObjects.add(poly)
   return poly
 }

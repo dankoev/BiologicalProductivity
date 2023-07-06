@@ -6,12 +6,12 @@ class YMapController {
       {
         center: centerCoords,
         zoom: this.zoom,
-        controls: [ 'typeSelector'],
+        controls: ['typeSelector'],
       })
   }
 
   setSelectState(state) {
-    switch (state){
+    switch (state) {
       case 'select':
         if (this.selectedArea === undefined) {
           this.selectedArea = new ymaps.Polygon([], {}, {
@@ -33,16 +33,23 @@ class YMapController {
         this.selectedArea.editor.stopDrawing();
         this.selectedArea.editor.stopEditing();
         break;
-    }    
+    }
   }
-  selectedAreaExist(){
+  selectedAreaExist() {
     console.log(this.selectedArea.geometry.getCoordinates())
     return this.selectedArea.geometry.getCoordinates()[0].length > 1
   }
-  showPoligonsWithTypes() {
-    
-  }
-  hidePoligonsWithTypes() {
+  showOrHidePoligonsOnTypes(type) {
+    this.map.geoObjects.each(gObj => {
+      if (gObj.properties.get("sectorType") == undefined) {
+        return
+      }
+      if (gObj.properties.get("sectorType") === type) {
+        gObj.options.set('visible', true)
+      } else {
+        gObj.options.set('visible', false)
+      }
+    });
 
   }
 
