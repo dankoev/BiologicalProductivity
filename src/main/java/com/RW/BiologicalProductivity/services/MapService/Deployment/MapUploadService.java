@@ -76,7 +76,7 @@ public class MapUploadService {
             region.setRegionCols(size[0]);
             region.setTransform(gdalService.getTransform());
             region.setCvType(typeMapCodding);
-            region.setFilled(true);
+            region.isFilled(true)
             
         }
         MapInfo mapInfo =  new MapInfo(srcDir.getName(),typeMap);

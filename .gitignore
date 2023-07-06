@@ -2,7 +2,7 @@ HELP.md
 src/main/resources/static/index_copy.html
 target/
 maps/
-mysql/data/
+mysql/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

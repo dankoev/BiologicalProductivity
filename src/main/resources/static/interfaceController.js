@@ -196,6 +196,7 @@ function init() {
   mapController = new YMapController('map', [107.88, 54.99])
   cteateBallonTemplate()
   controlAreaStates(mapController)
+  kmlLoadInit()
 
 }
 ymaps.ready(init)
