@@ -15,46 +15,63 @@
 </head>
 
 <body>
-<div class="container">
+<main>
     <div id="map"></div>
-    <div id="left-sizebar" class="sizebar">
-        <div class="sizebar-content collapsed">
-            <div id="control-box" class="box-row">
-                <div class="main-btns"></div>
-                <div class="optional-btns"></div>
+    <section class="funtional-bar">
+        <section id="left-sizebar">
+            <div class="sizebar-content collapsed">
+                <div id="control-box" class="box-row">
+                    <div class="main-btns"></div>
+                    <div class="optional-btns"></div>
+                </div>
+                <div id="heatmap-types" class="box-col">
+                    <label>
+                        <input type="radio" checked name="choiceMap" value="ZM">
+                        Теплоэнергетические ресурсы испарения
+                    </label>
+                    <label>
+                        <input type="radio" name="choiceMap" value="H">
+                        Суммарное увлажнение
+                    </label>
+                    <label>
+                        <input type="radio" name="choiceMap" value="SY">
+                        Ступень увлажнения
+                    </label>
+                    <label>
+                        <input type="radio" name="choiceMap" value="BP">
+                        Биологическая продуктивность
+                    </label>
+                </div>
+                <div class="box-row">
+                    <button id="calculatePolygon"> Вычислить область</button>
+                    <div id="load-item"></div>
+                </div>
             </div>
-            <div id="heatmap-types" class="box-col">
-                <label>
-                    <input type="radio" checked name="choiceMap" value="ZM">
-                    Теплоэнергетические ресурсы испарения
-                </label>
-                <label>
-                    <input type="radio" name="choiceMap" value="H">
-                    Суммарное увлажнение
-                </label>
-                <label>
-                    <input type="radio" name="choiceMap" value="SY">
-                    Ступень увлажнения
-                </label>
-                <label>
-                    <input type="radio" name="choiceMap" value="BP">
-                    Биологическая продуктивность
-                </label>
+            <div class="down-arrow"></div>
+        </section>
+        <div id="option-select-bar">
+            <div>
+                <input id="selection-mod" type="image" class="selected" alt="select" src="/imgs/select.png"></input>
+                <label for="selection-mod">Режим выбора произвольной области</label>
             </div>
-            <div class="box-row">
-                <button id="calculatePolygon"> Вычислить область</button>
-                <div id="load-item"></div>
+            <div>
+                <input id="selection-mod-kml" type="image" alt="kml" src="/imgs/kml-img.png"></input>
+                <label for="selection-mod-kml">Режим выбора kml</label>
             </div>
         </div>
-        <div class="down-arrow">
-            <img src="imgs/down-arrow.png" alt="">
+        <div id="layer-controller">
+            <button class="type-title">Слои карт</button>
+            <div hidden class="list-types">
+                <h4>Отображаемые области:</h4>
+            </div>
         </div>
-    </div>
+    </section>
+
     <div id="load-kml-container">
         <button>Загрузить kml</button>
     </div>
-    <div id="message-window"></div>
-    <div id="heatmap-scale">
+    <section id="message-window"></section>
+    <section id="heatmap-scale">
         <div class="signature">
             <b>10</b>
             <b>5</b>
@@ -63,14 +80,9 @@
         <div class="scale">
             <img src="/imgs/palitra.jpeg" alt="palitra">
         </div>
-    </div>
-    <div id="layer-controller">
-        <button class="type-title">Слои карт</button>
-        <div hidden class="list-types">
-            <h4>Отображаемые карты:</h4>
-        </div>
-    </div>
-</div>
+    </section>
+
+</main>
 </body>
 <script type="text/javascript" src="/interfaceController.js"></script>
 

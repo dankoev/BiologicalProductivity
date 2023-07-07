@@ -25,7 +25,7 @@ async function createPolyWithSector(blobURL, sectorCoords, sectorType) {
       opacity: 0.8,
     },
   )
-  setLayerType(sectorType)
+  intefaceController.layerController.setLayerType(sectorType)
   mapController.showOrHidePoligonsOnTypes(sectorType)
   mapController.map.geoObjects.add(poly)
   return poly
@@ -54,7 +54,9 @@ async function createAndShowArea(sectorInfoRequest) {
       setLoadState(loadState.hide)
     })
     .catch(e => {
-      showMessage(e, messageType.error)
+      intefaceController
+        .messageController
+        .showMessage(e, messageType.error)
       setLoadState(loadState.hide)
 
     })
@@ -74,7 +76,10 @@ async function getLastSectorStatistics() {
     .then(data => data.json())
     .then(jsonResponse => jsonResponse)
     .catch(e => {
-      showMessage(e, messageType.error)
+      console.log('here')
+      intefaceController
+        .messageController
+        .showMessage(e, messageType.error)
     })
 }
 

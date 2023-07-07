@@ -14,21 +14,53 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
-.container {
+button {
+    background: rgb(40, 13, 165);
+    padding: 7px;
+    margin: 2px;
+    height: 30px;
+    width: auto;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: normal;
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.5);
+}
+
+button:hover {
+    /* color: #a2e898; */
+    background: rgb(95, 74, 187);
+}
+
+div.smooth-hide {
+    opacity: 0;
+}
+
+input[type="radio"]:checked+label::before {
+    position: absolute;
+    left: 4px;
+    color: rgb(7, 56, 7);
+    content: "✔";
+}
+
+main {
     width: 100%;
     height: 100vh;
 }
 
-.collapsed {
-    height: 0;
-    overflow: hidden;
-}
-
-.box-row {
-    display: flex;
-    flex-direction: row;
-    padding: 2px;
-    margin: 2px;
+textarea {
+    padding: 5px;
+    width: 300px;
+    height: 70px;
+    resize: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: normal;
+    font-family: 'Roboto', sans-serif;
 
 }
 
@@ -39,28 +71,25 @@ body {
 
 }
 
-.main-btns {
-    width: 170px;
+.box-row {
+    display: flex;
+    flex-direction: row;
+    padding: 2px;
+    margin: 2px;
+
 }
 
-.sizebar {
-    padding: 5px;
-    margin: 5px;
-    border-radius: 10px;
-    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5);
-    position: absolute;
-    opacity: 0.8;
-    background-color: #ffffff;
-}
-
-.sizebar-content {
-    transition: height 10s ease;
-    width: 300px;
+.collapsed {
+    height: 0;
+    overflow: hidden;
 }
 
 .down-arrow {
     height: 20px;
-    width: 100%;
+    background-image: url("./imgs/down-arrow.png");
+    background-position: center center;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
 }
 
 .down-arrow img {
@@ -72,27 +101,34 @@ body {
 
 }
 
+.funtional-bar {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    opacity: 0.8;
+    display: flex;
+
+
+}
+
 .img-flip {
     transform: rotate(180deg);
+}
+
+.main-btns {
+    width: 170px;
+}
+
+
+
+.sizebar-content {
+    transition: height 10s ease;
+    width: 300px;
 }
 
 .smooth-hide {
     opacity: 1;
     transition: opacity 3s;
-}
-
-div.smooth-hide {
-    opacity: 0;
-}
-
-
-
-
-#map {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    overflow: hidden;
 }
 
 #heatMapType {
@@ -103,6 +139,124 @@ div.smooth-hide {
     border-radius: 5px;
     border-width: 1px;
 }
+
+#heatmap-scale {
+    position: absolute;
+    height: 215px;
+    width: 60px;
+    right: 10px;
+    top: 200px;
+    display: flex;
+    flex-direction: row;
+    background-color: rgb(247, 247, 178);
+    border-radius: 10px;
+    opacity: 0.8;
+    padding: 5px;
+}
+
+#heatmap-scale div.scale img {
+    transform: rotate(-90deg);
+    position: absolute;
+    top: 90px;
+    left: -90px;
+    width: 200px;
+    height: 20px;
+}
+
+#heatmap-scale div.scale {
+    width: 70%;
+    height: 200px;
+    position: relative;
+    align-self: center;
+}
+
+#heatmap-scale div.signature {
+    margin: 0 5px;
+    width: 30%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 50% auto 15px;
+    align-items: baseline;
+}
+
+
+
+
+
+#layer-controller {
+    margin-left: 10px;
+    width: 100px;
+    position: relative;
+}
+
+#layer-controller .list-types {
+    background-color: white;
+    position: absolute;
+    top: 35px;
+    left: 0px;
+    width: 200px;
+    padding: 5px;
+    padding-left: 20px;
+    border-radius: 10px;
+    text-align: start;
+}
+
+#layer-controller .list-types>div {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#layer-controller button {
+    background-color: #fff;
+    color: #0f141e;
+    height: 30px;
+    border-radius: 10px;
+    margin: 0;
+}
+
+#layer-controller button:hover {
+    background-color: #61abef;
+    color: #0f141e;
+}
+
+#layer-controller input[type="radio"] {
+    display: none;
+}
+
+#left-sizebar {
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5);
+    background-color: #ffffff;
+}
+
+#load-item {
+    display: none;
+    border: 5px solid #cae1bc;
+    border-top: 5px solid #1111ad;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    margin: 5px;
+    animation: spin 2s linear infinite;
+}
+
+#load-kml-container {
+    position: absolute;
+    left: 4px;
+    top: 200px;
+}
+
+
+
+#map {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow: hidden;
+}
+
 
 #message-window {
     min-height: 20px;
@@ -120,152 +274,65 @@ div.smooth-hide {
     padding-right: 6px;
     border-radius: 4px;
 
-    /* animation: fadeOut 5s; */
-
 }
 
-#load-item {
-    display: none;
-    border: 5px solid #cae1bc;
-    border-top: 5px solid #1111ad;
-    border-radius: 50%;
-    width: 15px;
-    height: 15px;
-    margin: 5px;
-    animation: spin 2s linear infinite;
-}
-
-#heatmap-scale {
-    position: absolute;
-    height: 215px;
-    width: 60px;
-    right: 10px;
-    top: 200px;
+#option-select-bar {
     display: flex;
-    flex-direction: row;
-    background-color: rgb(247, 247, 178);
-    border-radius: 10px;
-    opacity: 0.8;
-    padding: 5px;
-
-
-}
-
-#heatmap-scale div.scale img {
-    transform: rotate(-90deg);
-    position: absolute;
-    top: 90px;
-    left: -90px;
-    width: 200px;
+    align-items: center;
+    justify-content: space-between;
+    width: 60px;
     height: 20px;
-}
-
-#heatmap-scale div.scale {
-    width: 70%;
-    height: 200px;
-    position: relative;
-    align-self: center;
-
-}
-
-#heatmap-scale div.signature {
-    margin: 0 5px;
-    width: 30%;
-    height: 100%;
-    display: grid;
-    grid-template-rows: 50% auto 15px;
-    align-items: baseline;
-
-}
-
-#layer-controller {
-    position: absolute;
-    left: 330px;
-    top: 5px;
-    padding: 0px;
-    text-align: start;
-    width: 100px;
-    opacity: 0.8;
-}
-
-#layer-controller .list-types {
-    padding-left: 20px;
-    width: 200px;
-    background-color: #b2e3ef;
-    margin-top: 5px;
-    border-radius: 10px;
-    opacity: 0.9;
-}
-
-#layer-controller div {
-    margin: 3px;
-    white-space: nowrap;
-    list-style-type: none;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-
-#layer-controller button {
-    background-color: #fff;
-    color: #0f141e;
-}
-
-#layer-controller button:hover {
-    background-color: #61abef;
-    color: #0f141e;
-}
-
-#layer-controller input[type="radio"] {
-    display: none;
-}
-
-input[type="radio"]:checked+label::before {
-    position: absolute;
-    left: 4px;
-    color: rgb(7, 56, 7);
-    content: "✔";
-}
-
-#load-kml-container {
-    position: absolute;
-    left: 4px;
-    top: 200px;
-}
-
-button {
-    background: rgb(40, 13, 165);
-    padding: 7px;
-    margin: 1px;
-    height: 30px;
-    width: auto;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-family: inherit;
-    cursor: pointer;
-    white-space: normal;
-    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.5);
-}
-
-button:hover {
-    /* color: #a2e898; */
-    background: rgb(95, 74, 187);
-}
-
-textarea {
     padding: 5px;
-    width: 300px;
-    height: 70px;
-    resize: none;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: normal;
-    font-family: 'Roboto', sans-serif;
+    margin-left: 10px;
+    background-color: #ffffff;
+    border-radius: 7px;
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5);
 
 }
+
+#option-select-bar input {
+    width: 20px;
+    height: 20px;
+    background-color: white;
+}
+
+#option-select-bar input:hover {
+    opacity: 0.8;
+
+    &+label {
+        opacity: 0.9;
+        transition: opacity 0.5s;
+    }
+}
+
+#option-select-bar>div {
+    display: flex;
+    align-items: center;
+    padding: 3px;
+    border-radius: 7px;
+    position: relative;
+}
+
+#option-select-bar input.selected {
+    background-color: green;
+
+    #option-select-bar div:has(&) {
+        background-color: green;
+    }
+}
+
+#option-select-bar label {
+    position: absolute;
+    top: 35px;
+    left: 5px;
+    opacity: 0;
+    background-color: white;
+    border-radius: 5px;
+    white-space: nowrap;
+    padding: 2px 7px;
+
+}
+
 
 @media screen and (width: 1000px) {
     #heatmap-scale {
