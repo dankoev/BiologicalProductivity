@@ -1,31 +1,24 @@
-const messageType = {
-  error: 'error',
-  warning: 'warning'
-}
-const loadState = {
-  show: 'show',
-  hide: 'hide'
-}
-let mapController = undefined
-let mapTemplates = {}
+
 
 const intefaceController = {
   layerController: {
-    target: document.querySelector('#layer-controller')
-  },
-  oprionController: {
-    target: document.querySelector('#option-select-bar')
+    _target: document.querySelector('#layer-controller')
   },
   areaController: {
-    target: document.querySelector('#left-sizebar')
+    _target: document.querySelector('#left-sizebar'),
+    _optionBar: document.querySelector('#option-select-bar'),
+    _mapController: {},
+    _kmlController: kmlController
   },
   messageController: {
-    target: document.querySelector('#message-window')
+    _target: document.querySelector('#message-window')
   }
 }
 
+let mapController = undefined
+let mapTemplates = {}
 
-function cteateBallonTemplate() {
+function cteateBallonTemplate(mapController) {
   mapTemplates.balloonContentLayout = ymaps.templateLayoutFactory.createClass(
     `<div>
       <p id="max"> Max: {{ properties.areaStatistics.maxSectorValue | default:"No date" }} </p>
@@ -48,12 +41,13 @@ function cteateBallonTemplate() {
   })
 }
 
+// LayerController BEGINNING init
 intefaceController
   .layerController
   .fillLayerController = function (sizebarTarget, mapController) {
 
-    const typeSelectBtn = this.target.querySelector('.type-title')
-    const listTypes = this.target.querySelector('.list-types')
+    const typeSelectBtn = this._target.querySelector('.type-title')
+    const listTypes = this._target.querySelector('.list-types')
 
     typeSelectBtn.onclick = () => {
       listTypes.toggleAttribute("hidden")
@@ -69,7 +63,7 @@ intefaceController
         mapController.showOrHidePoligonsOnTypes(e.target.id)
       }
       const srcLabelsOfTypes = getListTypesFromSizebar();
-      const dstTypeList = this.target.querySelector('.list-types')
+      const dstTypeList = this._target.querySelector('.list-types')
 
       const createTypeElement = (srcLabel) => {
         const dstInput = document.createElement('input')
@@ -83,14 +77,14 @@ intefaceController
         dstLabel.htmlFor = dstInput.id
 
         const container = document.createElement('div')
-        container.appendChild(dstInput)
-        container.appendChild(dstLabel)
+        container.append(dstInput)
+        container.append(dstLabel)
         return container
       }
 
       for (const labelType of srcLabelsOfTypes) {
         const typeElement = createTypeElement(labelType)
-        dstTypeList.appendChild(typeElement)
+        dstTypeList.append(typeElement)
       }
     })()
 
@@ -99,7 +93,7 @@ intefaceController
 intefaceController
   .layerController
   .setLayerType = function (type) {
-    const typeList = this.target.querySelector('.list-types')
+    const typeList = this._target.querySelector('.list-types')
       .getElementsByTagName('input')
     for (const inputWithType of typeList) {
       if (inputWithType.id === type) {
@@ -109,85 +103,189 @@ intefaceController
     }
 
   }
+
+// LayerController END init
+
+// AreaController BEGINNING init
 intefaceController
   .areaController
-  .controlAreaStates = function (mapController) {
-    const createBtnWithAct = (text, className, action) => {
-      const btn = document.createElement('button')
-      btn.setAttribute('class', className)
-      btn.textContent = text
-      btn.onclick = function () {
-        action(btn)
-      }
-      return btn
-    }
-
-    const addCompleteBtn = (controlledBtn, targetAction) => {
-      controlledBtn.disabled = true
-      const actionCompliteBtn = (completeBtn) => {
-        controlledBtn.disabled = false
-        targetAction()
-        mapController.setSelectState('complete')
-        completeBtn.remove()
-      }
-      this.completeBtn = createBtnWithAct('Завершить', 'completeBtn', actionCompliteBtn)
-
-      this.target.querySelector('#control-box .optional-btns')
-        .appendChild(this.completeBtn)
-
-    }
-
-    const actionDelBtn = (delBtn) => {
-      if (this.completeBtn != null) {
-        this.completeBtn.remove()
-      }
-      this.editBtn.remove()
-      this.selectBtn.hidden = false
-      mapController.setSelectState('delete')
-      this.deleteBtn.remove()
-    }
-
-    const actionEditBtn = (eBtn) => {
-      mapController.setSelectState('edit')
-      addCompleteBtn(eBtn, () => { })
-    }
-
-    const actionSelectBtn = (sBtn) => {
-      mapController.setSelectState('select')
-      addCompleteBtn(sBtn, () => {
-        if (!mapController.selectedAreaExist()) {
-          return
-        }
-        sBtn.hidden = true
-        this.editBtn = createBtnWithAct("Редактировать", 'edit-btn', actionEditBtn)
-        this.deleteBtn = createBtnWithAct("Удалить", 'delete-btn', actionDelBtn)
-        this.target.querySelector('#control-box .main-btns')
-          .appendChild(this.editBtn)
-        this.target.querySelector('#control-box .main-btns')
-          .appendChild(this.deleteBtn)
-      })
-    }
-
-    this.selectBtn = createBtnWithAct("Выбрать", 'select-btn', actionSelectBtn)
-    this.target.querySelector('#control-box .main-btns')
-      .appendChild(this.selectBtn)
+  ._createBtnWithAct = function (text, className, action) {
+    const btn = document.createElement('button')
+    btn.setAttribute('class', className)
+    btn.textContent = text
+    btn.onclick = (e) => action(e)
+    return btn
   }
 
 intefaceController
   .areaController
-  .createArrow = function () {
-    this.target
+  ._addCompleteBtn = function (controlledBtn, targetAction) {
+    controlledBtn.disabled = true
+    const actionCompliteBtn = (e) => {
+      controlledBtn.disabled = false
+      targetAction()
+      this._mapController.setSelectedAreaState(selectedAreaStates.complete)
+      e.target.remove()
+    }
+    this._completeBtn = this._createBtnWithAct('Завершить', 'complete-btn', actionCompliteBtn)
+
+    this._target.querySelector('#control-box .optional-btns')
+      .append(this._completeBtn)
+  }
+
+intefaceController
+  .areaController
+  .setAreaMode = function (areaMode) {
+    const selectedOption = this._optionBar
+      .querySelector("input.selected")
+    if (selectedOption != null && selectedOption.id === areaMode)
+      return;
+    this._selectBtn.hidden = false
+    this._selectBtn.disabled = false
+    selectedOption != null ? selectedOption.classList.remove("selected") : ({});
+    this._mapController.setSelectedAreaState(selectedAreaStates.delete)
+    // this._mapController.
+    switch (areaMode) {
+      case "editable-mode":
+
+        this._selectBtn.textContent = "Выбрать"
+        this._optionBar
+          .querySelector("#editable-mode")
+          .classList.add('selected')
+        this._enableActionsEditableArea()
+        break;
+      case "kml-mode":
+        this._selectBtn.textContent = "Выбрать KML"
+        this._optionBar
+          .querySelector("#kml-mode")
+          .classList.add('selected')
+        this._enableActionsKmlArea()
+        break;
+      default:
+        break;
+    }
+  }
+intefaceController
+  .areaController
+  ._deleteAllOptionalBtns = function () {
+    if (this._deleteBtn != null) { this._deleteBtn.remove() }
+    if (this._completeBtn != null) { this._completeBtn.remove() }
+    if (this._editBtn != null) { this._editBtn.remove() }
+  }
+intefaceController
+  .areaController
+  ._enableActionsEditableArea = function () {
+    this._deleteAllOptionalBtns()
+    const actionDelBtn = () => {
+      if (this._completeBtn != null) {
+        this._completeBtn.remove()
+      }
+      this._editBtn.remove()
+      this._selectBtn.hidden = false
+      this._mapController.setSelectedAreaState(selectedAreaStates.delete)
+      this._deleteBtn.remove()
+    }
+
+    const actionEditBtn = (e) => {
+      this._mapController.setSelectedAreaState(selectedAreaStates.edit)
+      this._addCompleteBtn(e.target, () => { })
+    }
+
+    const actionSelectBtn = (e) => {
+      this._mapController.setSelectedAreaState(selectedAreaStates.select)
+      this._addCompleteBtn(e.target, () => {
+        if (!this._mapController.selectedAreaExist()) {
+          return
+        }
+        e.target.hidden = true
+        this._editBtn = this._createBtnWithAct("Редактировать", 'edit-btn', actionEditBtn)
+        this._deleteBtn = this._createBtnWithAct("Удалить", 'delete-btn', actionDelBtn)
+        this._target.querySelector('#control-box .main-btns')
+          .append(this._editBtn)
+        this._target.querySelector('#control-box .main-btns')
+          .append(this._deleteBtn)
+      })
+    }
+
+    this._selectBtn.onclick = actionSelectBtn
+  }
+
+intefaceController
+  .areaController
+  ._enableActionsKmlArea = function () {
+    this._deleteAllOptionalBtns()
+    const actionDelBtn = () => {
+      this._selectBtn.disabled = false
+      this._mapController.setSelectedAreaState(selectedAreaStates.delete)
+      this._deleteBtn.remove()
+    }
+
+    const actionSelectBtn = (e) => {
+      this._kmlController.modalWindow.setcloseEvent(() => {
+        e.target.disabled = true
+      })
+      this._kmlController.modalWindow.open((area) => {
+        this._mapController.addObject(area);
+        this._mapController.setBoundsForMap(area.geometry.getBounds());
+        this._mapController.setSelectedArea(area)
+
+        this._deleteBtn = this._createBtnWithAct("Удалить", 'delete-btn', actionDelBtn)
+        this._target.querySelector('#control-box .main-btns')
+          .append(this._deleteBtn)
+      })
+    }
+
+    this._selectBtn.onclick = actionSelectBtn
+  }
+
+intefaceController
+  .areaController
+  ._createArrow = function () {
+    this._target
       .querySelector(".down-arrow")
       .onclick = () => {
-        this.target.querySelector(".sizebar-content")
+        this._target.querySelector(".sizebar-content")
           .classList
           .toggle("collapsed")
 
-        this.target.querySelector(".down-arrow")
+        this._target.querySelector(".down-arrow")
           .classList
           .toggle("img-flip")
       }
   }
+
+intefaceController
+  .areaController
+  .controlAreaStates = function (mapController) {
+    this._mapController = mapController
+
+    const optionInputs = this._optionBar.getElementsByTagName('input')
+    for (const input of optionInputs) {
+      input.onclick = (e) => this.setAreaMode(e.target.id)
+    }
+    this._selectBtn = this._createBtnWithAct("Выбрать", 'select-btn', () => { })
+    this.setAreaMode(areaMode.editableMode)
+
+    this._target.querySelector('#control-box .main-btns')
+      .append(this._selectBtn)
+
+    this._createArrow()
+  }
+intefaceController
+  .areaController
+  .setLoadState = function (loadState) {
+    const loadItem = document.querySelector('#load-item')
+    if (loadState === 'show') {
+      loadItem.style.display = 'inline'
+    }
+    if (loadState === 'hide') {
+      loadItem.style.display = 'none'
+    }
+
+  }
+// AreaController END init
+
+// MessageController BEGINNING init
 intefaceController
   .messageController
   .showMessage = function (messageCont, messageType) {
@@ -223,32 +321,24 @@ intefaceController
     })
 
     hideAndDelAction()
-    messageDiv.appendChild(message)
-    this.target.appendChild(messageDiv)
-  }
-function setLoadState(loadState) {
-  const loadItem = document.querySelector('#load-item')
-  if (loadState === 'show') {
-    loadItem.style.display = 'inline'
-  }
-  if (loadState === 'hide') {
-    loadItem.style.display = 'none'
+    messageDiv.append(message)
+    this._target.append(messageDiv)
   }
 
-}
+// MessageController END init 
+
 function init() {
   mapController = new YMapController('map', [107.88, 54.99])
-  intefaceController
-    .areaController
-    .createArrow()
   intefaceController
     .layerController
     .fillLayerController(document.querySelector('#left-sizebar'), mapController)
   intefaceController
     .areaController
     .controlAreaStates(mapController)
-  cteateBallonTemplate()
-  kmlLoadInit()
-
+  cteateBallonTemplate(mapController)
+  intefaceController
+    .areaController
+    ._kmlController
+    .init(intefaceController)
 }
 ymaps.ready(init)

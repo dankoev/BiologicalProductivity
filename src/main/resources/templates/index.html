@@ -7,9 +7,6 @@
     <script
             src="https://api-maps.yandex.ru/2.1/?apikey=00edbb4c-85c6-4375-8249-f0baae6a12c2&lang=ru_RU&coordorder=longlat"
             type="text/javascript"></script>
-    <script type="text/javascript" src="/map.js"></script>
-    <script type="text/javascript" src="/sector.js"></script>
-    <script type="text/javascript" src="/kml_controller.js"></script>
     <link href="/styles.css" rel="stylesheet" />
 
 </head>
@@ -51,12 +48,12 @@
         </section>
         <div id="option-select-bar">
             <div>
-                <input id="selection-mod" type="image" class="selected" alt="select" src="/imgs/select.png"></input>
-                <label for="selection-mod">Режим выбора произвольной области</label>
+                <input id="editable-mode" type="image" alt="select" src="/imgs/select.png"></input>
+                <label for="editable-mode">Режим выбора произвольной области</label>
             </div>
             <div>
-                <input id="selection-mod-kml" type="image" alt="kml" src="/imgs/kml-img.png"></input>
-                <label for="selection-mod-kml">Режим выбора kml</label>
+                <input id="kml-mode" type="image" alt="kml" src="/imgs/kml-img.png"></input>
+                <label for="kml-mode">Режим выбора kml</label>
             </div>
         </div>
         <div id="layer-controller">
@@ -66,10 +63,6 @@
             </div>
         </div>
     </section>
-
-    <div id="load-kml-container">
-        <button>Загрузить kml</button>
-    </div>
     <section id="message-window"></section>
     <section id="heatmap-scale">
         <div class="signature">
@@ -84,6 +77,12 @@
 
 </main>
 </body>
+<script type="text/javascript" src="/share.js"></script>
+<script type="text/javascript" src="/modalWindowContainer.js"></script>
+<script type="text/javascript" src="/kmlController.js"></script>
 <script type="text/javascript" src="/interfaceController.js"></script>
+<script type="text/javascript" src="/map.js"></script>
+<script type="text/javascript" src="/sector.js"></script>
+
 
 </html>

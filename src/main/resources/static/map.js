@@ -10,35 +10,58 @@ class YMapController {
       })
   }
 
-  setSelectState(state) {
+  setSelectedAreaState(state) {
     switch (state) {
       case 'select':
-        if (this.selectedArea === undefined) {
-          this.selectedArea = new ymaps.Polygon([], {}, {
+        if (this._selectedArea === undefined) {
+          this._selectedArea = new ymaps.Polygon([], {}, {
             editorDrawingCursor: 'crosshair',
             strokeColor: '#0000ff',
             strokeWidth: 2,
           });
-          this.map.geoObjects.add(this.selectedArea);
+          this.map.geoObjects.add(this._selectedArea);
         }
 
       case 'edit':
-        this.selectedArea.editor.startDrawing();
+        this._selectedArea.editor.startDrawing();
         break;
       case 'delete':
-        this.map.geoObjects.remove(this.selectedArea);
-        this.selectedArea = undefined
+        this.map.geoObjects.remove(this._selectedArea);
+        this._selectedArea = undefined
         break;
       case 'complete':
-        this.selectedArea.editor.stopDrawing();
-        this.selectedArea.editor.stopEditing();
+        this._selectedArea.editor.stopDrawing();
+        this._selectedArea.editor.stopEditing();
         break;
     }
   }
-  selectedAreaExist() {
-    console.log(this.selectedArea.geometry.getCoordinates())
-    return this.selectedArea.geometry.getCoordinates()[0].length > 1
+  setSelectedArea(area) {
+    this._selectedArea = area
   }
+  getSelectedArea() {
+    return this._selectedArea
+  }
+  selectedAreaExist() {
+    return this._selectedArea.geometry.getCoordinates()[0].length > 1
+  }
+
+  getBountsSelectedArea() {
+    return this._selectedArea.geometry.getBounds()
+  }
+  setBoundsForMap(bounds) {
+    this.map.setBounds(bounds)
+  }
+  addObject(geoObject) {
+    this.map.geoObjects.add(geoObject);
+  }
+  getCoordsSelectedArea() {
+    const transformArrayCoords = (coords) => {
+      return coords.map(el => [el[0], el[1]])
+    }
+    const areaCoords = this._selectedArea.geometry.getCoordinates()[0]
+    return transformArrayCoords(areaCoords)
+  }
+
   showOrHidePoligonsOnTypes(type) {
     this.map.geoObjects.each(gObj => {
       if (gObj.properties.get("sectorType") == undefined) {

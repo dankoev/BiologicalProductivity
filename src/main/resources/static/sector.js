@@ -1,3 +1,4 @@
+const ICtrl = intefaceController
 
 async function createPolyWithSector(blobURL, sectorCoords, sectorType) {
   const sectorInfoPromise = getLastSectorStatistics()
@@ -25,7 +26,7 @@ async function createPolyWithSector(blobURL, sectorCoords, sectorType) {
       opacity: 0.8,
     },
   )
-  intefaceController.layerController.setLayerType(sectorType)
+  ICtrl.layerController.setLayerType(sectorType)
   mapController.showOrHidePoligonsOnTypes(sectorType)
   mapController.map.geoObjects.add(poly)
   return poly
@@ -51,13 +52,15 @@ async function createAndShowArea(sectorInfoRequest) {
       const blobURL = URL.createObjectURL(blob)
       const { sectorCoords, type } = sectorInfoRequest
       createPolyWithSector(blobURL, sectorCoords, type)
-      setLoadState(loadState.hide)
+
+      ICtrl.areaController
+        .setLoadState(loadState.hide)
     })
     .catch(e => {
-      intefaceController
-        .messageController
+      ICtrl.messageController
         .showMessage(e, messageType.error)
-      setLoadState(loadState.hide)
+      ICtrl.areaController
+        .setLoadState(loadState.hide)
 
     })
     .finally(console.log(`request heatmap sent`))
@@ -76,9 +79,7 @@ async function getLastSectorStatistics() {
     .then(data => data.json())
     .then(jsonResponse => jsonResponse)
     .catch(e => {
-      console.log('here')
-      intefaceController
-        .messageController
+      ICtrl.messageController
         .showMessage(e, messageType.error)
     })
 }
@@ -86,22 +87,22 @@ async function getLastSectorStatistics() {
 document.addEventListener('DOMContentLoaded', () => {
   let leftSizebar = document.querySelector('#left-sizebar')
   leftSizebar.querySelector('#calculatePolygon').onclick = () => {
-    const transformArrayCoords = (coords) => {
-      return coords.map(el => [el[0], el[1]])
-    }
 
-    const sectorCoords = mapController.selectedArea.geometry.getBounds()
-    const areaCoords = mapController.selectedArea.geometry.getCoordinates()[0]
-    const areaCoordsTransform = transformArrayCoords(areaCoords)
+
+    const sectorCoords = mapController.getBountsSelectedArea()
+    const areaCoords = mapController.getCoordsSelectedArea()
 
     const heatMapType = leftSizebar.querySelector('#heatmap-types input[name="choiceMap"]:checked')
-    setLoadState(loadState.show)
+    ICtrl.areaController
+      .setLoadState(loadState.show)
     createAndShowArea({
       sectorCoords,
       type: heatMapType.value,
-      areaCoords: areaCoordsTransform,
+      areaCoords,
     })
   }
 
 })
+
+
 
