@@ -2,20 +2,17 @@ package com.RW.BiologicalProductivity.services.MapService.Deployment;
 
 import com.RW.BiologicalProductivity.services.DB.entities.MapInfo;
 import com.RW.BiologicalProductivity.services.DB.entities.Region;
-import com.RW.BiologicalProductivity.services.DB.exceptions.DataBaseException;
 import com.RW.BiologicalProductivity.services.DB.exceptions.NoSuchValueException;
 import com.RW.BiologicalProductivity.services.DB.exceptions.UnknownDbException;
 import com.RW.BiologicalProductivity.services.DB.services.MapInfoService;
 import com.RW.BiologicalProductivity.services.DB.services.RegionService;
 import com.RW.BiologicalProductivity.services.GDAL.GdalService;
 import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
-import java.util.NoSuchElementException;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -41,6 +38,7 @@ public class MapUploadService {
             if (item.isDirectory()
                 && Objects.requireNonNull(item.listFiles()).length > 0){
                 try {
+                    cleanNotesInRegion(item);
                     AddNotesAboutRegion(item);
                 }catch (NoSuchValueException e){
                     throw new UnknownDbException("Ошибка БД");
@@ -48,6 +46,20 @@ public class MapUploadService {
                 
             }
             
+        }
+    }
+    public void cleanNotesInRegion(File srcDir) throws NoSuchValueException {
+        if (!regionService.hasInfo(srcDir.getName())){
+            System.out.printf("skip clean mapdir");
+            return;
+        }
+        List<MapInfo> mapsInfo = regionService.getMapsInfo(srcDir.getName());
+        for (MapInfo mapInfo: mapsInfo) {
+            File tiff = new File(srcDir.getPath() + "/" + mapInfo.getName());
+            if (!tiff.exists()){
+                System.out.printf("delete " + tiff.getPath() );
+                regionService.deleteMapInfoById(srcDir.getName(), mapInfo.getId());
+            }
         }
     }
     private void AddNotesAboutMap(Region region,File srcDir) throws IOException{

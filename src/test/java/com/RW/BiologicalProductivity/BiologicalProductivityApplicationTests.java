@@ -91,32 +91,34 @@ class BiologicalProductivityApplicationTests {
 //
 //
 //	}
-//	@Test
-//	void test3() throws IOException, DataBaseException {
-//		Instant start = Instant.now();
-//
-//		MapDeploymentImpl mapDeploymentImpl = new MapDeploymentImpl(regionService,mapInfoService,"region_1");
-//		mapDeploymentImpl.deployMap(TypeMap.ZM);
-//
-//		Instant finish = Instant.now();
-//		System.out.println("Oбщее время выполнения "
-//				+ Duration.between(start,finish).toMillis());
-////		Imgcodecs.imwrite("./sectors/mfd.jpeg",im1);
-//	}
-//
-//	@Test
-//	void test5() throws IOException, InterruptedException, DataBaseException {
-//		Instant start = Instant.now();
-//
-//		MapDeployment mapDeployment = new MapDeploymentParall(regionService,mapInfoService,"region_1");
-//		mapDeployment.setColSplit(10);
-//		mapDeployment.setRowSplit(10);
-//		mapDeployment.deployMap(TypeMap.BP);
-//
-//		Instant finish = Instant.now();
-//		System.out.println("Oбщее время выполнения "
-//				+ Duration.between(start,finish).toMillis());
-//	}
+	@Test
+	void test3() throws IOException, DataBaseException {
+		Instant start = Instant.now();
+		MapUploadService m = new MapUploadService(regionService,mapInfoService);
+		m.checkMapsDirectory();
+		MapDeploymentImpl mapDeploymentImpl = new MapDeploymentImpl(regionService,mapInfoService,"region_1");
+		mapDeploymentImpl.deployMap(TypeMap.ZM);
+
+		Instant finish = Instant.now();
+		System.out.println("Oбщее время выполнения "
+				+ Duration.between(start,finish).toMillis());
+	}
+	@Test
+	void test5() throws IOException, InterruptedException, DataBaseException {
+		Instant start = Instant.now();
+
+		MapUploadService m = new MapUploadService(regionService,mapInfoService);
+		m.checkMapsDirectory();
+
+		MapDeployment mapDeployment = new MapDeploymentParall(regionService,mapInfoService,"region_1");
+		mapDeployment.setColSplit(10);
+		mapDeployment.setRowSplit(10);
+		mapDeployment.deployMap(TypeMap.ZM);
+
+		Instant finish = Instant.now();
+		System.out.println("Oбщее время выполнения "
+				+ Duration.between(start,finish).toMillis());
+	}
 
 //	@Test
 //	void test2() throws IOException, InterruptedException, DataBaseException {

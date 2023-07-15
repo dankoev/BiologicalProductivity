@@ -46,10 +46,21 @@ public class RegionService {
         Region region = this.getInfo(regionName);
         return region.getMapsInfo()
                 .stream()
-                .filter((mapInfo) -> mapInfo.getType() == typeMap)
+                .filter(mapInfo -> mapInfo.getType() == typeMap)
                 .findAny()
                 .orElseThrow(()-> new NoSuchValueException("Map '" + typeMap.name() +
                         "' no exists in region with name '" + regionName + "'"));
+    }
+    @Transactional
+    public void deleteMapInfoById(String regionName, Long mapInfoId) throws NoSuchValueException {
+        Region region = this.getInfo(regionName);
+        MapInfo deletedMapInfo = region.getMapsInfo()
+                .stream()
+                .filter( mapInfo -> mapInfo.getId().equals(mapInfoId))
+                .findAny()
+                .orElseThrow(()-> new NoSuchValueException("mapInfoId = " + mapInfoId +
+                        " not exist"));
+        region.removeMapInfo(deletedMapInfo);
     }
     public Region save(Region region){
         return regionRepo.save(region);

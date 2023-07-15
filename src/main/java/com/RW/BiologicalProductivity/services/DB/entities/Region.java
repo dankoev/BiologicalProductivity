@@ -146,4 +146,12 @@ public class Region {
     public void setTransform(double[] transform) {
         this.transform = transform;
     }
+    public void addMapInfo(MapInfo mapInfo) {
+        mapsInfo.add(mapInfo);
+        mapInfo.setRegion(this);
+    }
+    public void removeMapInfo(MapInfo mapInfo) {
+        mapsInfo.remove(mapInfo);
+        mapInfo.setRegion(null);
+    }
 }
