@@ -97,7 +97,7 @@ class BiologicalProductivityApplicationTests {
 		MapUploadService m = new MapUploadService(regionService,mapInfoService);
 		m.checkMapsDirectory();
 		MapDeploymentImpl mapDeploymentImpl = new MapDeploymentImpl(regionService,mapInfoService,"region_1");
-		mapDeploymentImpl.deployMap(TypeMap.ZM);
+		mapDeploymentImpl.deployMap(TypeMap.SY);
 
 		Instant finish = Instant.now();
 		System.out.println("Oбщее время выполнения "

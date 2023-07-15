@@ -83,8 +83,8 @@ public class GdalService {
     }
     
     public Point getPointByWords(double longitude, double latitude){
-        int row = (int) Math.floor((latitude - transform[3]) / transform[5]);
-        int col = (int) Math.floor((longitude - transform[0]) / transform[1]);
+        int row = (int) Math.round((latitude - transform[3]) / transform[5]);
+        int col = (int) Math.round((longitude - transform[0]) / transform[1]);
         return new Point(col,row);
     }
     public static int writeMap(Mat map, String path,double noDataVal, double[] transform){
