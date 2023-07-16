@@ -82,10 +82,14 @@ public class MapData {
         };
 //        boolean hasNoData = detectNoDataSectors(rect.y, rect.x, rect.height, rect.width);
         sector.setInitialData(0,rect.y, rect.x, rect.height, rect.width,cornWordsCoord,false);
-        sector.data = img.submat(rect);
+        Mat sectorFromMap = img.submat(rect);
+        sectorFromMap.copyTo(sector.data);
         return sector;
     }
     protected double[] pixelToWord(int row, int col){
         return gdalSer.getGeoCoordByPixels(row,col);
+    }
+    protected void clear (){
+        this.img.release();
     }
 }

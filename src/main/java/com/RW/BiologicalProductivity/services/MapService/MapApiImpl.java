@@ -79,7 +79,9 @@ public class MapApiImpl implements MapAPI {
         points.fromList(localPoints);
         ArrayList<MatOfPoint> result = new ArrayList<>(1);
         result.add(points);
-        
+        //clear memory
+        mapData.clear();
+
         Imgproc.fillPoly(mask,result,new Scalar(0));
         sector.data.setTo(new Scalar(MapSector.noDataValue), mask);
         
