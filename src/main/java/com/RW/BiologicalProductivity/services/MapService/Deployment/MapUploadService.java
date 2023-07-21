@@ -34,7 +34,11 @@ public class MapUploadService {
         if ( !mapsDir.exists() || !mapsDir.isDirectory() ){
             throw new IOException("No such directory with maps. Create 'maps' dir in root");
         }
-        for (File item: Objects.requireNonNull(mapsDir.listFiles())){
+        File [] regionsDir = Objects.requireNonNull(mapsDir.listFiles());
+        if (regionsDir.length == 0) {
+            throw new IOException("There is no information about regions. Create a folder with files in the maps directory");
+        }
+        for (File item: regionsDir){
             if (item.isDirectory()
                 && Objects.requireNonNull(item.listFiles()).length > 0){
                 try {
