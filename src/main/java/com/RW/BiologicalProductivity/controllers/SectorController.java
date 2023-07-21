@@ -19,6 +19,7 @@ import java.time.Instant;
 
 
 @RestController
+@RequestMapping("/bp-app")
 public class SectorController {
     static{
         nu.pattern.OpenCV.loadLocally();

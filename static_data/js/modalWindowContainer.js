@@ -9,7 +9,7 @@ const modalWindowContainer = {
 }
 modalWindowContainer
   .init = function () {
-    this._initPromise = getHtmlTemplate('htmlTemplates/modalWindow.html')
+    this._initPromise = getHtmlTemplate('modalWindow.html')
       .then(modalWindowHtml => this._target.insertAdjacentHTML("afterbegin", modalWindowHtml))
     return this
   }

@@ -16,7 +16,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.io.IOException;
 
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/bp-app/admin")
 public class AdminController {
     @Autowired
     RegionService regionService;

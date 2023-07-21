@@ -33,7 +33,7 @@ async function createPolyWithSector(blobURL, sectorInfoRequest) {
 }
 
 function createAndShowArea(sectorInfoRequest) {
-  return fetch('/getHeatMapOfSector', {
+  return fetch('/bp-app/getHeatMapOfSector', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ function createAndShowArea(sectorInfoRequest) {
     .finally(console.log(`request heatmap sent`))
 }
 async function getLastSectorStatistics() {
-  return fetch('/getLastSectorStatistics', {
+  return fetch('/bp-app/getLastSectorStatistics', {
     method: 'GET',
   })
     .then(response => {

@@ -93,7 +93,7 @@ textarea {
 
 .down-arrow {
     height: 20px;
-    background-image: url("./imgs/down-arrow.png");
+    background-image: url("/imgs/down-arrow.png");
     background-position: center center;
     background-size: 20px 20px;
     background-repeat: no-repeat;

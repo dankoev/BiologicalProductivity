@@ -1,7 +1,7 @@
 const kmlController = {
   modalWindow: {
     _modalContainer: modalWindowContainer.init(),
-    _closeEvent: () => {}
+    _closeEvent: () => { }
   },
 }
 
@@ -16,7 +16,7 @@ kmlController
 kmlController
   .init = function (intefaceController) {
     this.modalWindow._ICtrl = intefaceController
-    this.modalWindow._initPromise = getHtmlTemplate("htmlTemplates/kmlWindowContent.html")
+    this.modalWindow._initPromise = getHtmlTemplate("kmlWindowContent.html")
       .then(htmlContent => {
         this.modalWindow._target.insertAdjacentHTML("afterbegin", htmlContent)
       })

@@ -30,7 +30,7 @@ class GeneralError extends Error {
 }
 
 function getHtmlTemplate(name) {
-  return fetch(name, {
+  return fetch(`/htmlTemplates/${name}`, {
     method: 'GET',
   })
     .then(response => {
