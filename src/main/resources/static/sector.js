@@ -1,10 +1,10 @@
 const ICtrl = intefaceController
 
-async function createPolyWithSector(blobURL, sectorCoords, sectorType) {
-  const sectorInfoPromise = getLastSectorStatistics()
+async function createPolyWithSector(blobURL, sectorInfoRequest) {
+  const { sectorCoords, type, areaCoords } = sectorInfoRequest
+  const sectorStatisticsPromise = getLastSectorStatistics()
   let sectorStatistics
-  await sectorInfoPromise.then(data => sectorStatistics = data)
-  // console.log(sectorStatistics)
+  sectorStatisticsPromise.then(data => sectorStatistics = data)
   const poly = new ymaps.Polygon(
     [[sectorCoords[0],
     [sectorCoords[1][0], sectorCoords[0][1]],
@@ -16,8 +16,8 @@ async function createPolyWithSector(blobURL, sectorCoords, sectorType) {
       balloonContent: ``,
       hintContent: "show information",
       areaStatistics: sectorStatistics,
-      sectorType: sectorType,
-
+      sectorType: type,
+      areaCoords,
     },
     {
       balloonContentLayout: mapTemplates.balloonContentLayout,
@@ -26,14 +26,14 @@ async function createPolyWithSector(blobURL, sectorCoords, sectorType) {
       opacity: 0.8,
     },
   )
-  ICtrl.layerController.setLayerType(sectorType)
-  mapController.showOrHidePoligonsOnTypes(sectorType)
+  ICtrl.layerController.setLayerType(type)
+  mapController.showOrHidePoligonsOnTypes(type)
   mapController.map.geoObjects.add(poly)
   return poly
 }
 
-async function createAndShowArea(sectorInfoRequest) {
-  await fetch('/getHeatMapOfSector', {
+function createAndShowArea(sectorInfoRequest) {
+  return fetch('/getHeatMapOfSector', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -44,21 +44,24 @@ async function createAndShowArea(sectorInfoRequest) {
       if (response.ok) {
         return response
       }
+      if (response.status === 405) {
+        throw new GeneralError('Server Error')
+      }
       return response.text()
         .then(text => { throw new Error(text) })
     })
     .then(data => data.blob())
     .then(blob => {
       const blobURL = URL.createObjectURL(blob)
-      const { sectorCoords, type } = sectorInfoRequest
-      createPolyWithSector(blobURL, sectorCoords, type)
+
+      createPolyWithSector(blobURL, sectorInfoRequest)
 
       ICtrl.areaController
         .setLoadState(loadState.hide)
     })
-    .catch(e => {
+    .catch(err => {
       ICtrl.messageController
-        .showMessage(e, messageType.error)
+        .showMessage(err)
       ICtrl.areaController
         .setLoadState(loadState.hide)
 
@@ -66,7 +69,7 @@ async function createAndShowArea(sectorInfoRequest) {
     .finally(console.log(`request heatmap sent`))
 }
 async function getLastSectorStatistics() {
-  return await fetch('/getLastSectorStatistics', {
+  return fetch('/getLastSectorStatistics', {
     method: 'GET',
   })
     .then(response => {
@@ -78,28 +81,52 @@ async function getLastSectorStatistics() {
     })
     .then(data => data.json())
     .then(jsonResponse => jsonResponse)
-    .catch(e => {
+    .catch(err => {
       ICtrl.messageController
-        .showMessage(e, messageType.error)
+        .showMessage(err)
     })
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  let leftSizebar = document.querySelector('#left-sizebar')
-  leftSizebar.querySelector('#calculatePolygon').onclick = () => {
+  const leftSizebar = document.querySelector('#left-sizebar')
+  leftSizebar.querySelector('#calculatePolygon').onclick = (e) => {
+    e.target.disabled = true
+    console.log(e.target.disabled)
+    const heatMapType = leftSizebar
+      .querySelector('#heatmap-types input[name="choiceMap"]:checked')
+      .value
+    try {
+      const sectorCoords = mapController.getBountsSelectedArea()
+      const areaCoords = mapController.getCoordsSelectedArea()
+
+      const alreadyExist = mapController.existSameArea(areaCoords, heatMapType)
+
+      if (alreadyExist) {
+        throw new GeneralWarning('Same area already has exist')
+      }
+      const areaOfArea = mapController.calculateAreaSelectedArea()
+
+      if (areaOfArea > LARGE_AREA) {
+        throw new GeneralWarning('Selected area is too large')
+      }
+
+      ICtrl.areaController
+        .setLoadState(loadState.show)
+      createAndShowArea({
+        sectorCoords,
+        type: heatMapType,
+        areaCoords,
+      })
+        .then(() => e.target.disabled = false)
 
 
-    const sectorCoords = mapController.getBountsSelectedArea()
-    const areaCoords = mapController.getCoordsSelectedArea()
+    } catch (err) {
+      ICtrl
+        .messageController
+        .showMessage(err)
+      e.target.disabled = false
+    }
 
-    const heatMapType = leftSizebar.querySelector('#heatmap-types input[name="choiceMap"]:checked')
-    ICtrl.areaController
-      .setLoadState(loadState.show)
-    createAndShowArea({
-      sectorCoords,
-      type: heatMapType.value,
-      areaCoords,
-    })
   }
 
 })

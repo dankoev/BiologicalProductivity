@@ -221,8 +221,10 @@ intefaceController
     }
 
     const actionSelectBtn = (e) => {
-      this._kmlController.modalWindow.setcloseEvent(() => {
+      this._kmlController.modalWindow.setCloseEvent(() => {
         e.target.disabled = true
+        this.setLoadState(loadState.show)
+
       })
       this._kmlController.modalWindow.open((area) => {
         this._mapController.addObject(area);
@@ -232,6 +234,7 @@ intefaceController
         this._deleteBtn = this._createBtnWithAct("Удалить", 'delete-btn', actionDelBtn)
         this._target.querySelector('#control-box .main-btns')
           .append(this._deleteBtn)
+        this.setLoadState(loadState.hide)
       })
     }
 
@@ -288,23 +291,31 @@ intefaceController
 // MessageController BEGINNING init
 intefaceController
   .messageController
-  .showMessage = function (messageCont, messageType) {
+  .showMessage = function (err) {
     const messageDiv = document.createElement('div')
     const message = document.createElement('p')
 
-    const messageContent = messageCont.toString()
-    if (messageType === 'warning') {
-      messageDiv.style.cssText = 'background-color:  #e7c608'
+    switch (err.constructor) {
+      case GeneralWarning:
+        messageDiv.style.cssText = 'background-color: #e7c608;'
+        break;
+      case GeneralError:
+      case Error:
+        messageDiv.style.cssText = 'background-color: red;'
+        break;
+
+      default:
+        messageDiv.style.cssText = 'background-color: #e8e9a4;'
+        break;
     }
-    if (messageType === 'error') {
-      messageDiv.style.cssText = 'background-color: red'
-    }
-    if (messageContent.length > 120) {
+
+    if (err.message.length > 120) {
       message.textContent = "Too much error content. Check console"
-      console.log(messageContent)
+      console.log(err.message)
     } else {
-      message.textContent = messageContent
+      message.textContent = err.message
     }
+
     const showTime = 4000
     let removeTimeout;
     const hideAndDelAction = () => {
@@ -328,7 +339,7 @@ intefaceController
 // MessageController END init 
 
 function init() {
-  mapController = new YMapController('map', [107.88, 54.99])
+  mapController = new YMapController('map', [107.88, 54.99], ymaps)
   intefaceController
     .layerController
     .fillLayerController(document.querySelector('#left-sizebar'), mapController)
@@ -341,4 +352,7 @@ function init() {
     ._kmlController
     .init(intefaceController)
 }
-ymaps.ready(init)
+ymaps.ready({
+  require: ['util.calculateArea'],
+  successCallback: init
+})

@@ -1,6 +1,7 @@
 const kmlController = {
   modalWindow: {
     _modalContainer: modalWindowContainer.init(),
+    _closeEvent: () => {}
   },
 }
 
@@ -19,7 +20,6 @@ kmlController
       .then(htmlContent => {
         this.modalWindow._target.insertAdjacentHTML("afterbegin", htmlContent)
       })
-    console.log(this)
     return this
   }
 
@@ -35,7 +35,7 @@ kmlController
       .catch(err =>
         this._ICtrl
           .messageController
-          .showMessage(err, messageType.warning)
+          .showMessage(err)
       )
   }
 
@@ -48,7 +48,7 @@ kmlController
   }
 kmlController
   .modalWindow
-  .setcloseEvent = function (callback) {
+  .setCloseEvent = function (callback) {
     this._closeEvent = callback
   }
 
@@ -69,7 +69,7 @@ kmlController
         .catch(err => {
           this._ICtrl
             .messageController
-            .showMessage(err, messageType.error)
+            .showMessage(err)
         })
     }
     kmlLi.querySelector("label").append(name)

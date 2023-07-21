@@ -33,6 +33,10 @@ button:hover {
     opacity: 0.9;
 }
 
+button:disabled {
+    cursor: not-allowed;
+}
+
 div.smooth-hide {
     opacity: 0;
 }

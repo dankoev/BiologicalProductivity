@@ -1,7 +1,8 @@
 class YMapController {
-  constructor(name, centerCoords) {
+  constructor(name, centerCoords, ymaps) {
     this.zoom = 5
-    this.map = new ymaps.Map(
+    this._ymaps = ymaps
+    this.map = new this._ymaps.Map(
       name,
       {
         center: centerCoords,
@@ -42,10 +43,14 @@ class YMapController {
     return this._selectedArea
   }
   selectedAreaExist() {
+    if (this._selectedArea == null || this._selectedArea == undefined) {
+      return false
+    }
     return this._selectedArea.geometry.getCoordinates()[0].length > 1
   }
 
   getBountsSelectedArea() {
+    this._checkForSmallArea()
     return this._selectedArea.geometry.getBounds()
   }
   setBoundsForMap(bounds) {
@@ -55,13 +60,42 @@ class YMapController {
     this.map.geoObjects.add(geoObject);
   }
   getCoordsSelectedArea() {
+    this._checkForSmallArea()
     const transformArrayCoords = (coords) => {
       return coords.map(el => [el[0], el[1]])
     }
     const areaCoords = this._selectedArea.geometry.getCoordinates()[0]
     return transformArrayCoords(areaCoords)
   }
+  calculateAreaSelectedArea() {
+    this._checkForSmallArea()
+    const areaSelectedArea = this._ymaps.util.calculateArea(this._selectedArea)
+    return (areaSelectedArea / 1e6).toFixed(3);
+  }
 
+  existSameArea(coords, type) {
+    const comparedGeoObj = { coords, type }
+
+
+    const isSame = (geoObj, comparedGeoObj) => {
+      const gProps = geoObj.properties
+      if (comparedGeoObj.type === gProps.get('sectorType')
+        && comparedGeoObj.coords.length === gProps.get('areaCoords').length) {
+        return JSON.stringify(comparedGeoObj.coords) === JSON.stringify(gProps.get('areaCoords'))
+      }
+      return false;
+    }
+
+    const geoObjectsIter = this.map.geoObjects.getIterator();
+    let geoObj = geoObjectsIter.getNext()
+    while (Object.keys(geoObj).length !== 0) {
+      const areasIsSames = isSame(geoObj, comparedGeoObj)
+
+      if (areasIsSames) return true
+      geoObj = geoObjectsIter.getNext()
+    }
+    return false
+  }
   showOrHidePoligonsOnTypes(type) {
     this.map.geoObjects.each(gObj => {
       if (gObj.properties.get("sectorType") == undefined) {
@@ -75,6 +109,11 @@ class YMapController {
     });
 
   }
-
+  _checkForSmallArea() {
+    if (!this.selectedAreaExist()
+      || this._selectedArea.geometry.getCoordinates()[0].length < 4) {
+      throw new GeneralError("Area is too small or not selected")
+    }
+  }
 }
 

@@ -1,7 +1,4 @@
-const messageType = {
-  error: 'error',
-  warning: 'warning'
-}
+const LARGE_AREA = 25_000
 const loadState = {
   show: 'show',
   hide: 'hide'
@@ -17,6 +14,21 @@ const selectedAreaStates = {
   complete: 'complete',
 }
 
+class GeneralWarning extends Error {
+  constructor(message) {
+    super(message)
+    this.name = "GeneralWarning"
+
+  }
+}
+class GeneralError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = "GeneralError"
+
+  }
+}
+
 function getHtmlTemplate(name) {
   return fetch(name, {
     method: 'GET',
@@ -30,9 +42,9 @@ function getHtmlTemplate(name) {
     })
     .then(data => data.text())
     .then(jsonResponse => jsonResponse)
-    .catch(e => {
+    .catch(err => {
       intefaceController
         .messageController
-        .showMessage(e, messageType.error)
+        .showMessage(err)
     })
 }
