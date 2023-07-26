@@ -21,6 +21,7 @@ class GeneralWarning extends Error {
 
   }
 }
+
 class GeneralError extends Error {
   constructor(message) {
     super(message)
@@ -29,22 +30,22 @@ class GeneralError extends Error {
   }
 }
 
-function getHtmlTemplate(name) {
-  return fetch(`/htmlTemplates/${name}`, {
-    method: 'GET',
+async function requestForBpServer(method, URL, postPatams) {
+  return fetch(`/bp-app/${URL}`, {
+    method,
+    ...postPatams
   })
     .then(response => {
       if (response.ok) {
         return response
       }
+      if (response.status === 502) {
+        throw new GeneralError('Server Error')
+      }
       return response.text()
-        .then(text => { throw new Error(text) })
+        .then(text => {
+          throw new GeneralError(text)
+        })
     })
-    .then(data => data.text())
-    .then(jsonResponse => jsonResponse)
-    .catch(err => {
-      intefaceController
-        .messageController
-        .showMessage(err)
-    })
+
 }

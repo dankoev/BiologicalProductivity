@@ -1,23 +1,14 @@
 package com.RW.BiologicalProductivity;
 
 import com.RW.BiologicalProductivity.services.DB.exceptions.DataBaseException;
-import com.RW.BiologicalProductivity.services.DB.exceptions.NoSuchValueException;
-import com.RW.BiologicalProductivity.services.DB.exceptions.OverwriteAttemptException;
 import com.RW.BiologicalProductivity.services.DB.services.MapInfoService;
 import com.RW.BiologicalProductivity.services.DB.services.RegionService;
-import com.RW.BiologicalProductivity.services.MapService.Deployment.MapDeploymentImpl;
-import com.RW.BiologicalProductivity.services.MapService.Deployment.MapDeploymentParall;
-import com.RW.BiologicalProductivity.services.MapService.Deployment.MapUploadService;
-import com.RW.BiologicalProductivity.services.MapService.Deployment.MapDeployment;
+import com.RW.BiologicalProductivity.services.MapService.Deployment.*;
 
 import com.RW.BiologicalProductivity.services.MapService.MapApiImpl;
-import com.RW.BiologicalProductivity.services.MapService.MapData;
 import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
 
-import com.RW.BiologicalProductivity.services.MapService.interfaces.MapAPI;
 import org.junit.jupiter.api.Test;
-import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -25,8 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootTest
 class BiologicalProductivityApplicationTests {
@@ -34,36 +23,39 @@ class BiologicalProductivityApplicationTests {
 		nu.pattern.OpenCV.loadLocally();
 		System.out.println("Load GDAL library");
 	}
+
 	@Autowired
 	RegionService regionService;
 	@Autowired
 	MapInfoService mapInfoService;
-	@Autowired
+
 	MapApiImpl mapApi;
+
 	@Test
-	void uploadServiceTest()  {
+	void uploadServiceTest() {
 		System.out.println("START: uploadServiceTest");
-		try{
-			MapUploadService m = new MapUploadService(regionService,mapInfoService);
+		try {
+			MapUploadService m = new MapUploadService(regionService);
 			m.checkMapsDirectory();
-		}catch ( IOException  | DataBaseException e){
+		} catch (IOException | DataBaseException e) {
 			System.err.println(e.getMessage());
 		}
 	}
+
 	@Test
-	void getHeatMapTest()  {
+	void getHeatMapTest() {
 		System.out.println("START: getHeatMapTest");
-		try{
+		try {
 			double[][] sectorCoords = new double[][]{
-						{100.3918,56.3898},
-						{104.1271,54.9368}};
+							{100.3918, 56.3898},
+							{104.1271, 54.9368}};
 			double[][] areaCoords = new double[][]{
-					{102.3918,55.4},
-                         {104.1271,56.0},
-                         {103.1271,55.0}};
+							{102.3918, 55.4},
+							{104.1271, 56.0},
+							{103.1271, 55.0}};
 			mapApi.detectRegion(sectorCoords);
-			byte[] data = mapApi.getSectorAsBytes(sectorCoords,areaCoords, TypeMap.getTypeByName("H"));
-		}catch ( IOException  | DataBaseException e){
+			byte[] data = mapApi.getSectorAsBytes(sectorCoords, areaCoords, TypeMap.getTypeByName("H"));
+		} catch (IOException | DataBaseException e) {
 			System.err.println(e.getMessage());
 		}
 	}
@@ -94,30 +86,31 @@ class BiologicalProductivityApplicationTests {
 	@Test
 	void test3() throws IOException, DataBaseException {
 		Instant start = Instant.now();
-		MapUploadService m = new MapUploadService(regionService,mapInfoService);
+		MapUploadService m = new MapUploadService(regionService);
 		m.checkMapsDirectory();
-		MapDeploymentImpl mapDeploymentImpl = new MapDeploymentImpl(regionService,mapInfoService,"region_1");
+		MapDeploymentImpl mapDeploymentImpl = new MapDeploymentImpl(regionService, mapInfoService, "region_1");
 		mapDeploymentImpl.deployMap(TypeMap.SY);
 
 		Instant finish = Instant.now();
 		System.out.println("Oбщее время выполнения "
-				+ Duration.between(start,finish).toMillis());
+						+ Duration.between(start, finish).toMillis());
 	}
+
 	@Test
 	void test5() throws IOException, InterruptedException, DataBaseException {
 		Instant start = Instant.now();
 
-		MapUploadService m = new MapUploadService(regionService,mapInfoService);
+		MapUploadService m = new MapUploadService(regionService);
 		m.checkMapsDirectory();
 
-		MapDeployment mapDeployment = new MapDeploymentParall(regionService,mapInfoService,"region_1");
+		MapDeployment mapDeployment = new MapDeploymentParall(regionService, mapInfoService, "region_1");
 		mapDeployment.setColSplit(10);
 		mapDeployment.setRowSplit(10);
 		mapDeployment.deployMap(TypeMap.ZM);
 
 		Instant finish = Instant.now();
 		System.out.println("Oбщее время выполнения "
-				+ Duration.between(start,finish).toMillis());
+						+ Duration.between(start, finish).toMillis());
 	}
 
 //	@Test
@@ -155,5 +148,5 @@ class BiologicalProductivityApplicationTests {
 //
 //	}
 
-	
+
 }

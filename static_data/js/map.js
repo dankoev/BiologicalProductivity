@@ -36,12 +36,15 @@ class YMapController {
         break;
     }
   }
+
   setSelectedArea(area) {
     this._selectedArea = area
   }
+
   getSelectedArea() {
     return this._selectedArea
   }
+
   selectedAreaExist() {
     if (this._selectedArea == null || this._selectedArea == undefined) {
       return false
@@ -53,12 +56,15 @@ class YMapController {
     this._checkForSmallArea()
     return this._selectedArea.geometry.getBounds()
   }
+
   setBoundsForMap(bounds) {
     this.map.setBounds(bounds)
   }
+
   addObject(geoObject) {
     this.map.geoObjects.add(geoObject);
   }
+
   getCoordsSelectedArea() {
     this._checkForSmallArea()
     const transformArrayCoords = (coords) => {
@@ -67,6 +73,7 @@ class YMapController {
     const areaCoords = this._selectedArea.geometry.getCoordinates()[0]
     return transformArrayCoords(areaCoords)
   }
+
   calculateAreaSelectedArea() {
     this._checkForSmallArea()
     const areaSelectedArea = this._ymaps.util.calculateArea(this._selectedArea)
@@ -74,7 +81,7 @@ class YMapController {
   }
 
   existSameArea(coords, type) {
-    const comparedGeoObj = { coords, type }
+    const comparedGeoObj = {coords, type}
 
 
     const isSame = (geoObj, comparedGeoObj) => {
@@ -96,7 +103,8 @@ class YMapController {
     }
     return false
   }
-  showOrHidePoligonsOnTypes(type) {
+
+  showPoligonsOnTypes(type) {
     this.map.geoObjects.each(gObj => {
       if (gObj.properties.get("sectorType") == undefined) {
         return
@@ -109,6 +117,7 @@ class YMapController {
     });
 
   }
+
   _checkForSmallArea() {
     if (!this.selectedAreaExist()
       || this._selectedArea.geometry.getCoordinates()[0].length < 4) {

@@ -2,105 +2,106 @@
 <html lang="ru">
 
 <head>
-    <title>Карта</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script
-        src="https://api-maps.yandex.ru/2.1/?apikey=00edbb4c-85c6-4375-8249-f0baae6a12c2&lang=ru_RU&coordorder=longlat"
-        type="text/javascript"></script>
-    <script src="https://yastatic.net/s3/mapsapi-jslibs/area/0.0.1/util.calculateArea.min.js"
-        type="text/javascript"></script>
-    <link href="css/styles.css" rel="stylesheet" />
+	<title>Карта</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<script
+		src="https://api-maps.yandex.ru/2.1/?apikey=00edbb4c-85c6-4375-8249-f0baae6a12c2&lang=ru_RU&coordorder=longlat"
+		type="text/javascript"></script>
+	<script src="https://yastatic.net/s3/mapsapi-jslibs/area/0.0.1/util.calculateArea.min.js"
+					type="text/javascript"></script>
+	<link href="css/styles.css" rel="stylesheet"/>
 
 </head>
 
 <body>
-    <main>
-        <div id="map"></div>
-        <section class="funtional-bar">
-            <section id="left-sizebar">
-                <div class="sizebar-content collapsed">
-                    <div id="control-box" class="box-row">
-                        <div class="main-btns"></div>
-                        <div class="optional-btns"></div>
-                    </div>
-                    <div id="heatmap-types" class="box-col">
-                        <label>
-                            <input type="radio" name="choiceMap" value="CFT">
-                            Коэффициент инсоляции
-                        </label>
-                        <label>
-                            <input type="radio" name="choiceMap" value="T">
-                            Сумма температур
-                        </label>
-                        <label>
-                            <input type="radio" name="choiceMap" value="N">
-                            Ландшафтные условия стока воды
-                        </label>
-                        <label>
-                            <input type="radio" name="choiceMap" value="H">
-                            Суммарное увлажнение
-                        </label>
-                        <label>
-                            <input type="radio" checked name="choiceMap" value="ZM">
-                            Теплоэнергетические ресурсы испарения
-                        </label>
-                        <label>
-                            <input type="radio" name="choiceMap" value="BetaH">
-                            Суммарная увлажненность
-                        </label>
-                        <label>
-                            <input type="radio" name="choiceMap" value="SY">
-                            Ступень увлажнения
-                        </label>
-                        <label>
-                            <input type="radio" name="choiceMap" value="BP">
-                            Биологическая продуктивность
-                        </label>
-                    </div>
-                    <div class="box-row">
-                        <button id="calculatePolygon"> Вычислить область</button>
-                        <div id="load-item"></div>
-                    </div>
-                </div>
-                <div class="down-arrow"></div>
-            </section>
-            <div id="option-select-bar">
-                <div>
-                    <input id="editable-mode" type="image" alt="select" src="/imgs/select.png">
-                    <label for="editable-mode">Режим выбора произвольной области</label>
-                </div>
-                <div>
-                    <input id="kml-mode" type="image" alt="kml" src="/imgs/kml-img.png">
-                    <label for="kml-mode">Режим выбора kml</label>
-                </div>
-            </div>
-            <div id="layer-controller">
-                <button class="type-title">Слои карт</button>
-                <div hidden class="list-types">
-                    <h4>Отображаемые области:</h4>
-                </div>
-            </div>
-        </section>
-        <section id="message-window"></section>
-        <section id="heatmap-scale">
-            <div class="signature">
-                <b>10</b>
-                <b>5</b>
-                <b>0</b>
-            </div>
-            <div class="scale">
-                <img src="imgs/palitra.jpeg" alt="palitra">
-            </div>
-        </section>
+<main>
+	<div id="map"></div>
+	<section class="funtional-bar">
+		<section class="sizebar">
+			<div class="sizebar-content collapsed">
+				<div class="sizebar-content-control box-row">
+					<div class="main-btns"></div>
+					<div class="optional-btns"></div>
+				</div>
+				<div id="heatmap-types" class="sizebar-content-types box-col">
+					<label>
+						<input type="radio" name="choiceMap" value="CFT">
+						Коэффициент инсоляции
+					</label>
+					<label>
+						<input type="radio" name="choiceMap" value="T">
+						Сумма температур
+					</label>
+					<label>
+						<input type="radio" name="choiceMap" value="N">
+						Ландшафтные условия стока воды
+					</label>
+					<label>
+						<input type="radio" name="choiceMap" value="H">
+						Суммарное увлажнение
+					</label>
+					<label>
+						<input type="radio" checked name="choiceMap" value="ZM">
+						Теплоэнергетические ресурсы испарения
+					</label>
+					<label>
+						<input type="radio" name="choiceMap" value="BetaH">
+						Суммарная увлажненность
+					</label>
+					<label>
+						<input type="radio" name="choiceMap" value="SY">
+						Ступень увлажнения
+					</label>
+					<label>
+						<input type="radio" name="choiceMap" value="BP">
+						Биологическая продуктивность
+					</label>
+				</div>
+				<div class="box-row">
+					<button id="calculatePolygon">Вычислить область</button>
+					<div class="load-item"></div>
+				</div>
+			</div>
+			<div class="down-arrow"></div>
+		</section>
+		<div id="option-select-bar">
+			<div>
+				<input id="editable-mode" type="image" alt="select" src="/imgs/select.png">
+				<label for="editable-mode">Режим выбора произвольной области</label>
+			</div>
+			<div>
+				<input id="kml-mode" type="image" alt="kml" src="/imgs/kml-img.png">
+				<label for="kml-mode">Режим выбора kml</label>
+			</div>
+		</div>
+		<div id="layers">
+			<button class="layers-title">Слои карт</button>
+			<div hidden class="layers-list-types">
+				<h4>Отображаемые области:</h4>
+			</div>
+		</div>
+	</section>
+	<section id="message-window"></section>
+	<section id="heatmap-scale">
+		<div class="signature">
+			<b>...</b>
+			<b>...</b>
+			<b>...</b>
+		</div>
+		<div class="scale">
+			<img src="imgs/palitra.jpeg" alt="palitra">
+		</div>
+	</section>
 
-    </main>
+</main>
 </body>
 <script type="text/javascript" src="js/share.js"></script>
+<script type="text/javascript" src="js/loadMapsInfo.js"></script>
 <script type="text/javascript" src="js/modalWindowContainer.js"></script>
 <script type="text/javascript" src="js/kmlController.js"></script>
 <script type="text/javascript" src="js/interfaceController.js"></script>
 <script type="text/javascript" src="js/map.js"></script>
-<script type="text/javascript" src="js/sector.js"></script>
+<script type="text/javascript" src="js/sectorController.js"></script>
 
 
 </html>
