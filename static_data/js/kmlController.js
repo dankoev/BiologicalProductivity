@@ -1,4 +1,7 @@
-const kmlController = {
+import {modalWindowContainer} from "./modalWindowContainer.js";
+
+
+export const kmlController = {
 	modalWindow: {
 		_htmlTemplate: `
       <div class="kml-areas">

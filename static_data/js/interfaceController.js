@@ -1,4 +1,11 @@
-const intefaceController = {
+import {YMapController} from "./map.js";
+import {modalWindowContainer} from "./modalWindowContainer.js";
+import {kmlController} from "./kmlController.js";
+
+import {showUpdateMapsInfoFromHTML} from "./loadMapsInfo.js";
+import {createAndShowArea} from "./sectorController.js";
+
+export const intefaceController = {
 	heatmapScale: {
 		_target: document.querySelector('#heatmap-scale'),
 	},
@@ -16,33 +23,11 @@ const intefaceController = {
 	messageController: {
 		_target: document.querySelector('#message-window')
 	},
+	sectorController: {
+		_controlledBnt: document.querySelector('#calculatePolygon'),
+		_leftSizebar: document.querySelector('.sizebar'),
+	}
 
-}
-
-let mapController = undefined
-let mapTemplates = {}
-
-function cteateBallonTemplate(mapController) {
-	mapTemplates.balloonContentLayout = ymaps.templateLayoutFactory.createClass(
-		`<div>
-      <p id="max"> Max: {{ properties.areaStatistics.maxSectorValue | default:"No data"  }} </p>
-      <p id="min"> Min: {{ properties.areaStatistics.minSectorValue | default:"No data"  }} </p>
-      <p id="average">Average: {{ properties.areaStatistics.averageSectorValue | default:"No data" }} </p>
-      <button id="delete-heatmap"> Удалить </button>
-    </div>`, {
-			build: function () {
-				mapTemplates.balloonContentLayout.superclass.build.call(this)
-				document.querySelector('#delete-heatmap').onclick = this.delete.bind(this)
-			},
-
-			clear: function () {
-				document.querySelector('#delete-heatmap').removeEventListener('click', this.delete)
-				mapTemplates.balloonContentLayout.superclass.clear.call(this)
-			},
-			delete: function () {
-				mapController.map.geoObjects.remove(this.getData().geoObject)
-			},
-		})
 }
 
 // HeatMapScale BEGINNING init
@@ -413,7 +398,58 @@ intefaceController
 	this._target.append(messageDiv)
 }
 
-// MessageController END init 
+// MessageController END init
+
+// SectorController BEGINNUNG init
+intefaceController
+	.sectorController
+	._areaController = intefaceController.areaController
+
+intefaceController
+	.sectorController
+	._messageController = intefaceController.messageController
+
+intefaceController
+	.sectorController
+	.listenCalcEvent = function (mapController) {
+	this._controlledBnt.onclick = (e) => {
+		e.target.disabled = true
+		const heatMapType = this._leftSizebar
+			.querySelector('#heatmap-types input[name="choiceMap"]:checked')
+			.value
+		try {
+			const sectorCoords = mapController.getBountsSelectedArea()
+			const areaCoords = mapController.getCoordsSelectedArea()
+
+			const alreadyExist = mapController.existSameArea(areaCoords, heatMapType)
+
+			if (alreadyExist) {
+				throw new GeneralWarning('Same area already has exist')
+			}
+			const areaOfArea = mapController.calculateAreaSelectedArea()
+			if (areaOfArea > LARGE_AREA) {
+				throw new GeneralWarning('Selected area is too large')
+			}
+
+			this._areaController
+				.setLoadState(loadState.show)
+			createAndShowArea({
+				sectorCoords,
+				type: heatMapType,
+				areaCoords,
+			}, mapController)
+				.then(() => e.target.disabled = false)
+
+		} catch (err) {
+			this._messageController
+				.showMessage(err)
+			e.target.disabled = false
+		}
+
+	}
+}
+
+// SectorController END init
 
 function getInfoAboutMapsFromBPApp() {
 	return requestForBpServer('GET', 'getInterfaceInfo')
@@ -438,21 +474,28 @@ function getInfoAboutMaps() {
 }
 
 function init() {
-	mapController = new YMapController('map', [107.88, 54.99], ymaps)
+	const mapController = new YMapController('map', [107.88, 54.99], ymaps)
 	intefaceController
 		.layerController
 		.fillLayerController(document.querySelector('.sizebar'), mapController)
+
 	intefaceController
 		.areaController
 		.controlAreaStates(mapController)
 	cteateBallonTemplate(mapController)
+
+	intefaceController
+		.sectorController
+		.listenCalcEvent(mapController)
+
 	getInfoAboutMaps()
 		.then(data => {
+			console.log(`MapsInfos loaded`)
 			console.log(data)
 			return data
 		})
 		.then(res => intefaceController.layerController._mapsInfos = res)
-	showUpdateMapsInfoFromHTML()
+//	showUpdateMapsInfoFromHTML()
 
 }
 

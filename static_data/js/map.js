@@ -1,4 +1,4 @@
-class YMapController {
+export class YMapController {
   constructor(name, centerCoords, ymaps) {
     this.zoom = 5
     this._ymaps = ymaps

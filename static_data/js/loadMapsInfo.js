@@ -1,4 +1,4 @@
-function showUpdateMapsInfoFromHTML() {
+export function showUpdateMapsInfoFromHTML() {
 	fetch('/data/mapsInfosHTML.html', {
 		method: 'GET'
 	})

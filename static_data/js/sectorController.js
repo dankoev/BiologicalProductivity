@@ -1,6 +1,7 @@
-const ICtrl = intefaceController
+import {intefaceController as ICtrl} from "./interfaceController.js";
 
-function createPolyWithSector(blobURL, sectorInfoRequest) {
+
+function createPolyWithSector(blobURL, sectorInfoRequest, mapController) {
 	const {sectorCoords, type, areaCoords} = sectorInfoRequest
 	const sectorStatisticsPromise = getLastSectorStatistics()
 
@@ -34,7 +35,7 @@ function createPolyWithSector(blobURL, sectorInfoRequest) {
 	return poly;
 }
 
-async function createAndShowArea(sectorInfoRequest) {
+export async function createAndShowArea(sectorInfoRequest, mapController) {
 	return requestForBpServer('POST', 'getHeatMapOfSector', {
 		headers: {
 			'Content-Type': 'application/json',
@@ -44,7 +45,7 @@ async function createAndShowArea(sectorInfoRequest) {
 		.then(data => data.blob())
 		.then(blob => {
 			const blobURL = URL.createObjectURL(blob)
-			createPolyWithSector(blobURL, sectorInfoRequest)
+			createPolyWithSector(blobURL, sectorInfoRequest, mapController)
 			ICtrl.areaController
 				.setLoadState(loadState.hide)
 		})
@@ -67,49 +68,6 @@ async function getLastSectorStatistics() {
 				.showMessage(err)
 		})
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-	const leftSizebar = document.querySelector('.sizebar')
-	leftSizebar.querySelector('#calculatePolygon').onclick = (e) => {
-		e.target.disabled = true
-		const heatMapType = leftSizebar
-			.querySelector('#heatmap-types input[name="choiceMap"]:checked')
-			.value
-		try {
-			const sectorCoords = mapController.getBountsSelectedArea()
-			const areaCoords = mapController.getCoordsSelectedArea()
-
-			const alreadyExist = mapController.existSameArea(areaCoords, heatMapType)
-
-			if (alreadyExist) {
-				throw new GeneralWarning('Same area already has exist')
-			}
-			const areaOfArea = mapController.calculateAreaSelectedArea()
-			console.log(areaOfArea)
-			if (areaOfArea > LARGE_AREA) {
-				throw new GeneralWarning('Selected area is too large')
-			}
-
-			ICtrl.areaController
-				.setLoadState(loadState.show)
-			createAndShowArea({
-				sectorCoords,
-				type: heatMapType,
-				areaCoords,
-			})
-				.then(() => e.target.disabled = false)
-
-
-		} catch (err) {
-			ICtrl
-				.messageController
-				.showMessage(err)
-			e.target.disabled = false
-		}
-
-	}
-
-})
 
 
 

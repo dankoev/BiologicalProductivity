@@ -1,4 +1,4 @@
-const modalWindowContainer = {
+export const modalWindowContainer = {
 	_htmlTemplate: `
   <div class="modal-window">
     <div class="modal-window-close"></div>
@@ -45,7 +45,6 @@ modalWindowContainer
 	.close = function () {
 	const removedNodes = this._target.querySelector('.modal-window-content')
 		.childNodes
-	console.log(removedNodes)
 	Array.from(removedNodes).forEach(el => el.remove())
 	this._target.remove()
 }
