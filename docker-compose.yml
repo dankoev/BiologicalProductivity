@@ -22,9 +22,8 @@ services:
       - 8081:80
   nginx:
     image: nginx
-    #    depends_on:
     ports:
       - 80:80
     volumes:
-      - ./static_data:/var/www/bio-app/static
+      - ./frontend/dist:/var/www/bio-app/static
       - ./nginx-config.d:/etc/nginx/conf.d

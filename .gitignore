@@ -38,3 +38,8 @@ build/
 /node_modules
 /src/main/resources/static/data
 /uploads
+
+# frontend ignore
+frontend/package-lock.json
+frontend/node_modules
+frontend/dist
