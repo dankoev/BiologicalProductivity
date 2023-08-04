@@ -1,5 +1,6 @@
 import ymaps from "ymaps"
 import { GeneralError } from "./share"
+import { Subject, distinctUntilChanged } from "rxjs"
 
 const utils = ['util.calculateArea']
 const controls = ['typeSelector']
@@ -61,6 +62,15 @@ const map = new Promise(async (resolve, reject) => {
   }))
 })
 
+const areaTypeStream$ = new Subject()
+  .pipe(distinctUntilChanged())
+
+areaTypeStream$.subscribe((val) => showPoligonsOnTypes(val))
+
+export function getAreaTypeStream() {
+  return areaTypeStream$
+}
+
 export function selectedAreaExist() {
   return selectedArea?.geometry.getCoordinates()[0].length > 1 ? true : false
 
@@ -90,6 +100,7 @@ export function createHeatmapContainer(bounds, type, areaCoords, blobURL) {
 
 export async function addPolyToMap(polygon) {
   (await map).geoObjects.add(polygon)
+  areaTypeStream$.next(polygon.properties.get("sectorType"))
 }
 
 function SmallAreaСheck() {

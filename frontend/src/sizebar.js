@@ -201,3 +201,8 @@ calculateBtn
   .addEventListener('click', (e) => {
     calculateAction(e)
   })
+
+// get info outside
+export function getListTypes() {
+  return sizebar.querySelectorAll('.sizebar__types label')
+}

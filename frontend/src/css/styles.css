@@ -100,20 +100,6 @@ main {
   }
 }
 
-.layers-list-types {
-  background-color: white;
-  position: absolute;
-  top: 35px;
-  left: 0;
-  padding: 5px 5px 5px 20px;
-  border-radius: 10px;
-  text-align: start;
-}
-
-.layers-list-types>div {
-  white-space: nowrap;
-}
-
 .modal-window {
   width: auto;
   max-width: 500px;
@@ -211,37 +197,6 @@ main {
   display: grid;
   grid-template-rows: 50% auto 15px;
   align-items: baseline;
-}
-
-
-#layers {
-  position: relative;
-}
-
-
-#layers .map-info {
-  color: blue;
-  font-size: 0.7em;
-  vertical-align: top;
-  cursor: pointer;
-}
-
-
-#layers button {
-  background-color: #fff;
-  color: #0f141e;
-  height: 30px;
-  border-radius: 10px;
-  margin: 0;
-}
-
-#layers button:hover {
-  background-color: #61abef;
-  color: #0f141e;
-}
-
-#layers input[type="radio"] {
-  display: none;
 }
 
 
