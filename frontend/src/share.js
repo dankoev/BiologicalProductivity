@@ -1,3 +1,15 @@
+const areaState = {
+  select: 'select',
+  edit: 'edit',
+  delete: 'delete',
+  complete: 'complete',
+}
+const typeMode = {
+  editable: 'editable',
+  kml: 'kml'
+}
+
+
 class GeneralWarning extends Error {
   constructor(message) {
     super(message)
@@ -18,5 +30,5 @@ class ServerError extends GeneralError {
     this.name = "ServerError"
   }
 }
-export { GeneralError, GeneralWarning, ServerError }
+export { GeneralError, GeneralWarning, ServerError, areaState, typeMode }
 

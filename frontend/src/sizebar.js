@@ -1,8 +1,9 @@
 import {Subject, map} from "rxjs";
 import "./css/sizebar.css"
-import {areaState, getAreaInfo, selectedAreaExist, setSelectedAreaState} from "./ymapsControl";
+import {getAreaInfo, selectedAreaExist} from "./ymapsControl";
 import {getHeatmapFromServer} from "./serverLoad";
 import {showMessage} from "./messageBar";
+import {areaState, typeMode} from "./share";
 
 const sizebar = document.querySelector(".sizebar")
 const deleteBtn = sizebar.querySelector('.sizebar__control .delete')
@@ -26,10 +27,6 @@ sizebar
   })
 
 // Area control logic
-const typeMode = {
-  editable: 'editable',
-  kml: 'kml'
-}
 
 function show(...bnts) {
   bnts.forEach(bnt => {
@@ -50,7 +47,7 @@ function resetToInitial() {
   show(selectBtn)
 }
 
-export class Mode {
+class Mode {
   static currentMode = typeMode.editable
 
   static enableKmlMode() {
@@ -83,7 +80,6 @@ const statesStream$ = new Subject()
   )
 
 const editableModeControl = val => {
-  setSelectedAreaState(val)
   switch (val) {
     case areaState.select:
     case areaState.edit:
@@ -111,7 +107,6 @@ const kmlModeControl = val => {
       show(deleteBtn)
       break;
     case areaState.delete:
-      setSelectedAreaState(val)
       hide(deleteBtn)
       show(selectBtn)
       break;
@@ -132,8 +127,11 @@ const modeSwitch = ({mode, state}) => {
       break;
   }
 }
-const editableModeListener = statesStream$.subscribe(modeSwitch)
+statesStream$.subscribe(modeSwitch)
 
+function getStateStream() {
+  return statesStream$
+}
 
 selectBtn
   .addEventListener('click', (e) => {
@@ -203,6 +201,8 @@ calculateBtn
   })
 
 // get info outside
-export function getListTypes() {
+function getListTypes() {
   return sizebar.querySelectorAll('.sizebar__types label')
 }
+
+export {getStateStream, getListTypes, Mode}

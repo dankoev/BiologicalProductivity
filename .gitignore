@@ -19,6 +19,7 @@ nginx-config.d/
 
 ### IntelliJ IDEA ###
 .idea
+.fleet
 *.iws
 *.iml
 *.ipr

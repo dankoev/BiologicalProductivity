@@ -1,6 +1,6 @@
 import "./css/layers.css"
 import {getListTypes} from "./sizebar"
-import {getAreaTypeStream, showPoligonsOnTypes} from "./ymapsControl"
+import {getAreaTypeStream} from "./ymapsControl"
 
 const layers = document.querySelector(".layers")
 const typeSelectBtn = layers.querySelector('.layers__title')
@@ -8,7 +8,7 @@ const listTypes = layers.querySelector('.layers__list')
 
 // click action on layer type
 const actionSelectionType = (e) => {
-  showPoligonsOnTypes(e.target.id)
+  getAreaTypeStream().next(e.target.id)
 }
 
 // click action on "info" icon

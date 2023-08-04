@@ -1,6 +1,7 @@
 import ymaps from "ymaps"
-import { GeneralError } from "./share"
+import { GeneralError, areaState, typeMode } from "./share"
 import { Subject, distinctUntilChanged } from "rxjs"
+import { getStateStream } from "./sizebar"
 
 const utils = ['util.calculateArea']
 const controls = ['typeSelector']
@@ -9,13 +10,6 @@ const zoom = 5
 const centerCoords = [107.88, 54.99]
 
 let selectedArea
-
-export const areaState = {
-  select: 'select',
-  edit: 'edit',
-  delete: 'delete',
-  complete: 'complete',
-}
 let balloonContentLayout
 
 function createBalloonContentLayout() {
@@ -67,16 +61,16 @@ const areaTypeStream$ = new Subject()
 
 areaTypeStream$.subscribe((val) => showPoligonsOnTypes(val))
 
-export function getAreaTypeStream() {
+function getAreaTypeStream() {
   return areaTypeStream$
 }
 
-export function selectedAreaExist() {
+function selectedAreaExist() {
   return selectedArea?.geometry.getCoordinates()[0].length > 1 ? true : false
 
 }
 
-export function createHeatmapContainer(bounds, type, areaCoords, blobURL) {
+function createHeatmapContainer(bounds, type, areaCoords, blobURL) {
   return new ymaps.Polygon(
     [[bounds[0],
     [bounds[1][0], bounds[0][1]],
@@ -98,7 +92,7 @@ export function createHeatmapContainer(bounds, type, areaCoords, blobURL) {
   )
 }
 
-export async function addPolyToMap(polygon) {
+async function addPolyToMap(polygon) {
   (await map).geoObjects.add(polygon)
   areaTypeStream$.next(polygon.properties.get("sectorType"))
 }
@@ -110,7 +104,7 @@ function SmallAreaСheck() {
   }
 }
 
-export function getAreaInfo() {
+function getAreaInfo() {
   SmallAreaСheck()
   const transformArrayCoords = (coords) => {
     return coords.map(el => [el[0], el[1]])
@@ -123,7 +117,7 @@ export function getAreaInfo() {
 
 }
 
-export async function showPoligonsOnTypes(type) {
+async function showPoligonsOnTypes(type) {
   (await map).geoObjects.each(gObj => {
     if (gObj.properties.get("sectorType") == undefined) {
       return
@@ -136,20 +130,20 @@ export async function showPoligonsOnTypes(type) {
   });
 
 }
-export async function setSelectedAreaState(state) {
+async function setSelectedAreaState(state) {
 
   switch (state) {
-    case 'select':
+    case areaState.select:
       selectedArea = selectedArea ?? new ymaps.Polygon([], {}, {
         editorDrawingCursor: 'crosshair',
         strokeColor: '#0000ff',
         strokeWidth: 2,
       });
       (await map).geoObjects.add(selectedArea)
-    case 'edit':
+    case areaState.edit:
       selectedArea.editor.startDrawing();
       break;
-    case 'delete':
+    case areaState.delete:
       if (selectedArea === undefined || selectedArea === null) {
         return
       }
@@ -157,8 +151,27 @@ export async function setSelectedAreaState(state) {
       (await map).geoObjects.remove(selectedArea)
       selectedArea = null
       break;
-    case 'complete':
+    case areaState.complete:
       selectedArea?.editor.stopEditing();
       break;
   }
+}
+
+// set selected area state base on button click in sizebar
+getStateStream().subscribe(({ mode, state }) => {
+  switch (mode) {
+    case typeMode.editable:
+      setSelectedAreaState(state)
+      break;
+    case typeMode.kml:
+      if (state === areaState.delete) {
+        setSelectedAreaState(areaState.delete)
+      }
+      break;
+  }
+})
+
+export {
+  getAreaInfo, addPolyToMap,
+  createHeatmapContainer, selectedAreaExist, getAreaTypeStream,
 }
