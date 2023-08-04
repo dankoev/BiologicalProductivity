@@ -4,6 +4,8 @@
   "description": "frontend for Biological Productivity app ",
   "main": "main.js",
   "scripts": {
+    "start_server": "docker compose -f ../docker-compose.yml up -d nginx",
+    "stop_server": "docker compose -f ../docker-compose.yml down",
     "dev": "webpack --mode development",
     "release": "webpack --mode production"
   },
@@ -14,6 +16,7 @@
     "html-loader": "^4.2.0",
     "html-webpack-plugin": "^5.5.3",
     "mini-css-extract-plugin": "^2.7.6",
+    "source-map-loader": "^4.0.1",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
   },
