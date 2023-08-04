@@ -42,7 +42,7 @@ public class MapApiImpl implements MapAPI {
         return !(point.x > region.getRightLong() || point.x < region.getLeftLong()
                 || point.y > region.getTopLat() || point.y < region.getBottomLat());
     }
-    public byte[] getSectorAsBytes(double[][] twoPoints, TypeMap typeMap) throws IOException, NoSuchValueException {
+    public byte[] getSectorAsBytes(double[][] areaBounds, TypeMap typeMap) throws IOException, NoSuchValueException {
         String region_name;
         try {
             region_name = region.getName();
@@ -51,7 +51,7 @@ public class MapApiImpl implements MapAPI {
         }
         MapData mapData = new MapData(regionService.getMapInfo(region_name,typeMap));
         MapSector sector = mapData
-                .getFillSector(twoPoints);
+                .getFillSector(areaBounds);
         new Thread(() ->{
             sector.calculateOptionalInfo();
             currentSector = sector;
@@ -60,17 +60,17 @@ public class MapApiImpl implements MapAPI {
         Imgcodecs.imencode(".png",sector.toHeatMap(),buf);
         return buf.toArray();
     }
-    public byte[] getSectorAsBytes(double[][] twoPoints, double[][] areaWordCoords, TypeMap typeMap) throws IOException, NoSuchValueException {
+    public byte[] getSectorAsBytes(double[][] areaBounds, double[][] internalСoords, TypeMap typeMap) throws IOException, NoSuchValueException {
         Instant start = Instant.now();
         
         String region_name = region.getName();
         MapData mapData = new MapData(regionService.getMapInfo(region_name,typeMap));
         MapSector sector = mapData
-                .getFillSector(twoPoints);
+                .getFillSector(areaBounds);
         Mat mask  = new Mat(sector.rows, sector.cols, CvType.CV_8UC1,new Scalar(1));
         ArrayList<Point> localPoints = new ArrayList<>();
         
-        for (double[] point: areaWordCoords) {
+        for (double[] point: internalСoords) {
             Point convertedPoint = mapData.gdalSer.getPointByWords(point[0],point[1]);
             localPoints.add(new Point(convertedPoint.x - sector.offsetCols ,
                     convertedPoint.y - sector.offsetRows ));

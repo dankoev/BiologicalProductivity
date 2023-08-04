@@ -2,30 +2,30 @@ package com.RW.BiologicalProductivity.controllers.models;
 
 public class SectorRequest {
     private String type;
-    private double[][] sectorCoords;
-    private double[][] areaCoords;
-    
+    private double[][] coords;
+    private double[][] bounds;
+
     public String getType() {
         return type;
     }
-    
+
     public void setType(String type) {
         this.type = type;
     }
-    
-    public double[][] getSectorCoords() {
-        return sectorCoords;
+
+    public double[][] getCoords() {
+        return coords;
     }
-    
-    public void setSectorCoords(double[][] sectorCoords) {
-        this.sectorCoords = sectorCoords;
+
+    public void setCoords(double[][] coords) {
+        this.coords = coords;
     }
-    
-    public double[][] getAreaCoords() {
-        return areaCoords;
+
+    public double[][] getBounds() {
+        return bounds;
     }
-    
-    public void setAreaCoords(double[][] areaCoords) {
-        this.areaCoords = areaCoords;
+
+    public void setBounds(double[][] bounds) {
+        this.bounds = bounds;
     }
 }
