@@ -4,3 +4,4 @@ import './sizebar'
 import "./modeBar"
 import "./messageBar"
 import "./layers"
+import "./modalWindowContainer"
