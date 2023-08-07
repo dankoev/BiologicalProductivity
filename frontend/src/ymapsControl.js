@@ -1,7 +1,7 @@
 import ymaps from "ymaps"
-import { GeneralError, areaState, typeMode } from "./share"
-import { Subject, distinctUntilChanged } from "rxjs"
-import { getStateStream } from "./sizebar"
+import {GeneralError, areaState, typeMode} from "./share"
+import {Subject, distinctUntilChanged} from "rxjs"
+import {getStateStream} from "./sizebar"
 
 const utils = ['util.calculateArea']
 const controls = ['typeSelector']
@@ -20,21 +20,21 @@ function createBalloonContentLayout() {
         <p id="average">Average: {{ properties.areaStatistics.averageSectorValue | default:"No data" }} </p>
         <button id="delete-heatmap"> Удалить </button>
       </div>`, {
-    build: function () {
-      balloonContentLayout.superclass.build.call(this)
-      document.querySelector('#delete-heatmap').onclick = this.delete.bind(this)
-    },
+      build: function () {
+        balloonContentLayout.superclass.build.call(this)
+        document.querySelector('#delete-heatmap').onclick = this.delete.bind(this)
+      },
 
-    clear: function () {
-      document.querySelector('#delete-heatmap').removeEventListener('click', this.delete)
-      balloonContentLayout.superclass.clear.call(this)
-    },
-    delete: function () {
-      map.then(mapObj => {
-        mapObj.geoObjects.remove(this.getData().geoObject)
-      })
-    },
-  })
+      clear: function () {
+        document.querySelector('#delete-heatmap').removeEventListener('click', this.delete)
+        balloonContentLayout.superclass.clear.call(this)
+      },
+      delete: function () {
+        map.then(mapObj => {
+          mapObj.geoObjects.remove(this.getData().geoObject)
+        })
+      },
+    })
 }
 
 const map = new Promise(async (resolve, reject) => {
@@ -50,10 +50,10 @@ const map = new Promise(async (resolve, reject) => {
 
   resolve(new ymaps.Map(
     ymapID, {
-    center: centerCoords,
-    zoom,
-    controls,
-  }))
+      center: centerCoords,
+      zoom,
+      controls,
+    }))
 })
 
 const areaTypeStream$ = new Subject()
@@ -73,9 +73,9 @@ function selectedAreaExist() {
 function createHeatmapContainer(bounds, type, areaCoords, blobURL) {
   return new ymaps.Polygon(
     [[bounds[0],
-    [bounds[1][0], bounds[0][1]],
-    bounds[1],
-    [bounds[0][0], bounds[1][1]],
+      [bounds[1][0], bounds[0][1]],
+      bounds[1],
+      [bounds[0][0], bounds[1][1]],
     ]],
     {
       balloonContentHeader: "Area info",
@@ -94,7 +94,19 @@ function createHeatmapContainer(bounds, type, areaCoords, blobURL) {
 
 async function addPolyToMap(polygon) {
   (await map).geoObjects.add(polygon)
-  areaTypeStream$.next(polygon.properties.get("sectorType"))
+  const polyType = polygon.properties.get("sectorType")
+  if (polyType) {
+    areaTypeStream$.next(polyType)
+  }
+}
+
+async function addSelectedArea(polygon) {
+  addPolyToMap(polygon)
+  selectedArea = polygon
+}
+
+async function setBoundsForMap(bounds) {
+  (await map).setBounds(bounds)
 }
 
 function SmallAreaСheck() {
@@ -119,7 +131,7 @@ function getAreaInfo() {
 
 async function showPoligonsOnTypes(type) {
   (await map).geoObjects.each(gObj => {
-    if (gObj.properties.get("sectorType") == undefined) {
+    if (gObj.properties.get("sectorType") === undefined) {
       return
     }
     if (gObj.properties.get("sectorType") === type) {
@@ -130,6 +142,7 @@ async function showPoligonsOnTypes(type) {
   });
 
 }
+
 async function setSelectedAreaState(state) {
 
   switch (state) {
@@ -158,7 +171,7 @@ async function setSelectedAreaState(state) {
 }
 
 // set selected area state base on button click in sizebar
-getStateStream().subscribe(({ mode, state }) => {
+getStateStream().subscribe(({mode, state}) => {
   switch (mode) {
     case typeMode.editable:
       setSelectedAreaState(state)
@@ -172,6 +185,6 @@ getStateStream().subscribe(({ mode, state }) => {
 })
 
 export {
-  getAreaInfo, addPolyToMap,
+  getAreaInfo, addPolyToMap, addSelectedArea, setBoundsForMap,
   createHeatmapContainer, selectedAreaExist, getAreaTypeStream,
 }

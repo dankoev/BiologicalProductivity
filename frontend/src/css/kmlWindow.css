@@ -1,0 +1,40 @@
+
+.kml-areas {
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+  overflow: auto;
+}
+
+.kml-areas__search {
+  position: sticky;
+  top: 0;
+  width: 220px;
+  margin: 2px;
+  border-radius: 5px;
+  font: inherit;
+  padding: 0.2em 0.5em;
+  border: none;
+  background-color: #71d191;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.kml-areas__list {
+  list-style-type: none;
+
+  & > li {
+    margin: 2px 0;
+  }
+
+  & label {
+    border-radius: 5px;
+    padding: 2px 5px;
+  }
+
+  & label:hover {
+    background-color: #cae1bc;
+  }
+}

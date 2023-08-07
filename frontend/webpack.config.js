@@ -1,10 +1,14 @@
 const path = require('path')
 const HTMLWebpackPlug = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const { SourceMapDevToolPlugin } = require("webpack");
+const {SourceMapDevToolPlugin} = require("webpack");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 module.exports = {
   watch: true,
-  entry: "./src/main.js",
+  entry: {
+    main: "./src/main.js"
+  },
   module: {
     rules: [
       {
@@ -34,6 +38,14 @@ module.exports = {
     new SourceMapDevToolPlugin({
       filename: "[file].map"
     }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: './src/data',
+          to: './data'
+        }
+      ]
+    })
   ],
   externals: {
     ymaps: "ymaps",

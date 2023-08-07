@@ -4,6 +4,7 @@ import {getAreaInfo, selectedAreaExist} from "./ymapsControl";
 import {getHeatmapFromServer} from "./serverLoad";
 import {showMessage} from "./messageBar";
 import {areaState, typeMode} from "./share";
+import {openKmlWindow} from "./kmlControl";
 
 const sizebar = document.querySelector(".sizebar")
 const deleteBtn = sizebar.querySelector('.sizebar__control .delete')
@@ -76,7 +77,7 @@ const statesStream$ = new Subject()
         mode: Mode.currentMode,
         state,
       }
-    })
+    }),
   )
 
 const editableModeControl = val => {
@@ -100,11 +101,21 @@ const editableModeControl = val => {
       break;
   }
 }
-const kmlModeControl = val => {
+const kmlModeControl = async val => {
   switch (val) {
     case areaState.select:
-      // await loadKMl()
-      show(deleteBtn)
+      selectBtn.disabled = false
+      const kmlWindow = await openKmlWindow()
+      kmlWindow
+        .setLoadedAreaEvent(() => {
+          show(deleteBtn)
+          hideLoadIcon()
+        })
+      kmlWindow
+        .setStartLoadAreaEvent(() => {
+          selectBtn.disabled = true
+          showLoadIcon()
+        })
       break;
     case areaState.delete:
       hide(deleteBtn)
