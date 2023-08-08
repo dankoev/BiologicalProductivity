@@ -1,6 +1,7 @@
 import "./css/layers.css"
 import {getListTypes} from "./sizebar"
 import {getAreaTypeStream} from "./ymapsControl"
+import {showMapInfo} from "./mapInfo"
 
 const layers = document.querySelector(".layers")
 const typeSelectBtn = layers.querySelector('.layers__title')
@@ -13,7 +14,8 @@ const actionSelectionType = (e) => {
 
 // click action on "info" icon
 const actionShowMapInfo = (e) => {
-  // this._showMapInfo(e.target.parentElement.querySelector('input').id)
+  const typeMap = e.target.dataset.formap
+  showMapInfo(typeMap)
 }
 
 // layer element creation function
@@ -29,6 +31,7 @@ const createTypeElement = (srcLabel) => {
   dstLabel.htmlFor = dstInput.id
 
   const mapInfo = document.createElement('span')
+  mapInfo.dataset.formap = dstInput.id
   mapInfo.textContent = " info"
   mapInfo.className = "map-info"
   mapInfo.addEventListener('click', actionShowMapInfo)

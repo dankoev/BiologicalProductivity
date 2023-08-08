@@ -43,6 +43,10 @@ module.exports = {
         {
           from: './src/data',
           to: './data'
+        },
+        {
+          from: './src/mapInfo',
+          to: './mapInfo'
         }
       ]
     })
