@@ -1,9 +1,9 @@
 import {Subject, map} from "rxjs";
 import "./css/sizebar.css"
-import {getAreaInfo, selectedAreaExist} from "./ymapsControl";
+import {calculateAreaSelectedArea, existSameArea, getAreaInfo, selectedAreaExist} from "./ymapsControl";
 import {getHeatmapFromServer} from "./serverLoad";
 import {showMessage} from "./messageBar";
-import {areaState, typeMode} from "./share";
+import {areaState, GeneralWarning, LARGE_AREA, typeMode} from "./share";
 import {openKmlWindow} from "./kmlControl";
 
 const sizebar = document.querySelector(".sizebar")
@@ -190,6 +190,17 @@ async function calculateAction(e) {
     const mapType = sizebar
       .querySelector(".sizebar__types input[name='choiceMap']:checked")
       .value
+
+    const alreadyExist = await existSameArea({...areaInfo, type: mapType})
+    
+    if (alreadyExist) {
+      throw new GeneralWarning('Same area already has exist')
+    }
+    const areaOfArea = calculateAreaSelectedArea()
+    if (areaOfArea > LARGE_AREA) {
+      throw new GeneralWarning('Selected area is too large')
+    }
+
     showLoadIcon()
     await getHeatmapFromServer({
       ...areaInfo,

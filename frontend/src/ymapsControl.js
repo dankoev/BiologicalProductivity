@@ -184,7 +184,40 @@ getStateStream().subscribe(({mode, state}) => {
   }
 })
 
+
+function existSameArea(areaInfoWithType) {
+  const isSame = (geoObj, comparedAreaInfo) => {
+    const gProps = geoObj.properties
+    if (comparedAreaInfo.type !== gProps.get('sectorType')) {
+      return false
+    }
+    const gCoords = gProps.get('areaCoords')
+    if (comparedAreaInfo.coords.length === gCoords?.length) {
+      return JSON.stringify(comparedAreaInfo.coords) === JSON.stringify(gCoords)
+    }
+    return false;
+  }
+  return map.then(mapObj => {
+    const geoObjectsIter = mapObj.geoObjects.getIterator();
+    let geoObj = geoObjectsIter.getNext()
+    while (Object.keys(geoObj).length !== 0) {
+      const areasSames = isSame(geoObj, areaInfoWithType)
+      if (areasSames) return true
+
+      geoObj = geoObjectsIter.getNext()
+    }
+    return false
+  })
+}
+
+function calculateAreaSelectedArea() {
+  SmallAreaСheck()
+  const areaSelectedArea = ymaps.util.calculateArea(selectedArea)
+  return (areaSelectedArea / 1e6).toFixed(3);
+}
+
 export {
   getAreaInfo, addPolyToMap, addSelectedArea, setBoundsForMap,
   createHeatmapContainer, selectedAreaExist, getAreaTypeStream,
+  calculateAreaSelectedArea, existSameArea
 }

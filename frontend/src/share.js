@@ -9,6 +9,7 @@ const typeMode = {
   kml: 'kml'
 }
 
+const LARGE_AREA = 25_000
 
 class GeneralWarning extends Error {
   constructor(message) {
@@ -17,6 +18,7 @@ class GeneralWarning extends Error {
 
   }
 }
+
 class GeneralError extends Error {
   constructor(message) {
     super(message)
@@ -24,11 +26,13 @@ class GeneralError extends Error {
 
   }
 }
+
 class ServerError extends GeneralError {
   constructor(message) {
     super(message)
     this.name = "ServerError"
   }
 }
-export { GeneralError, GeneralWarning, ServerError, areaState, typeMode }
+
+export {GeneralError, GeneralWarning, ServerError, areaState, typeMode, LARGE_AREA}
 
