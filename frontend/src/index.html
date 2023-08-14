@@ -3,102 +3,112 @@
 
 <head>
   <title>Карта</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <script
     src="https://api-maps.yandex.ru/2.1/?apikey=00edbb4c-85c6-4375-8249-f0baae6a12c2&lang=ru_RU&coordorder=longlat"
     type="text/javascript"></script>
   <script src="https://yastatic.net/s3/mapsapi-jslibs/area/0.0.1/util.calculateArea.min.js"
-    type="text/javascript"></script>
+          type="text/javascript"></script>
 </head>
 
 <body>
-  <main>
-    <div id="map"></div>
-    <section class="funtional-bar">
-      <section class="sizebar">
-        <div class="sizebar__content collapsed">
-          <div class="sizebar__control box-row">
-            <div class="main-btns">
-              <button class="select">Выбрать область</button>
-              <button class="edit">Редактировать</button>
-              <button class="delete">Удалить</button>
-            </div>
-            <div class="optional-btns">
-              <button class="complete">Завершить</button>
-            </div>
+<main>
+  <div id="map"></div>
+  <section class="funtional-bar">
+    <section class="sizebar">
+      <div class="sizebar__content collapsed">
+        <div class="sizebar__control box-row">
+          <div class="main-btns">
+            <button class="select">Выбрать область</button>
+            <button class="edit">Редактировать</button>
+            <button class="delete">Удалить</button>
           </div>
-          <div class="sizebar__types box-col">
-            <label>
-              <input type="radio" name="choiceMap" value="CFT">
-              Коэффициент инсоляции
-            </label>
-            <label>
-              <input type="radio" name="choiceMap" value="T">
-              Сумма температур
-            </label>
-            <label>
-              <input type="radio" name="choiceMap" value="N">
-              Ландшафтные условия стока воды
-            </label>
-            <label>
-              <input type="radio" name="choiceMap" value="H">
-              Суммарное увлажнение
-            </label>
-            <label>
-              <input type="radio" checked name="choiceMap" value="ZM">
-              Теплоэнергетические ресурсы испарения
-            </label>
-            <label>
-              <input type="radio" name="choiceMap" value="BetaH">
-              Суммарная увлажненность
-            </label>
-            <label>
-              <input type="radio" name="choiceMap" value="SY">
-              Ступень увлажнения
-            </label>
-            <label>
-              <input type="radio" name="choiceMap" value="BP">
-              Биологическая продуктивность
-            </label>
-          </div>
-          <div class="box-row">
-            <button id="calculatePolygon">Вычислить область</button>
-            <div class="load-item"></div>
+          <div class="optional-btns">
+            <button class="complete">Завершить</button>
           </div>
         </div>
-        <input type="image" src="./imgs/down-arrow.png" class="down-arrow"></input>
-      </section>
-      <div id="mode-bar">
-        <div>
-          <input class="active" id="editable-mode" type="image" alt="select icon" src="./imgs/select.png">
-          <label for="editable-mode">Режим выбора произвольной области</label>
+        <div class="sizebar__types box-col">
+          <label>
+            <input type="radio" name="choiceMap" value="CFT">
+            Коэффициент инсоляции
+          </label>
+          <label>
+            <input type="radio" name="choiceMap" value="T">
+            Сумма температур
+          </label>
+          <label>
+            <input type="radio" name="choiceMap" value="N">
+            Ландшафтные условия стока воды
+          </label>
+          <label>
+            <input type="radio" name="choiceMap" value="H">
+            Суммарное увлажнение
+          </label>
+          <label>
+            <input type="radio" checked name="choiceMap" value="ZM">
+            Теплоэнергетические ресурсы испарения
+          </label>
+          <label>
+            <input type="radio" name="choiceMap" value="BetaH">
+            Суммарная увлажненность
+          </label>
+          <label>
+            <input type="radio" name="choiceMap" value="SY">
+            Ступень увлажнения
+          </label>
+          <label>
+            <input type="radio" name="choiceMap" value="BP">
+            Биологическая продуктивность
+          </label>
         </div>
-        <div>
-          <input id="kml-mode" type="image" alt="kml icon" src="./imgs/kml-img.png">
-          <label for="kml-mode">Режим выбора kml</label>
+        <div class="box-row">
+          <button id="calculatePolygon">Вычислить область</button>
+          <div class="load-item"></div>
         </div>
       </div>
-      <div class="layers">
-        <button class="layers__title">Слои карт</button>
-        <div hidden class="layers__list">
-          <h4>Отображаемые области:</h4>
-        </div>
-      </div>
+      <input type="image" src="./imgs/down-arrow.png" class="down-arrow">
     </section>
-    <section id="message-window">
-      <p></p>
-    </section>
-    <section id="heatmap-scale">
-      <div class="signature">
-        <b>...</b>
-        <b>...</b>
-        <b>...</b>
+    <div id="mode-bar">
+      <div>
+        <input class="active" id="editable-mode" type="image" alt="select icon" src="./imgs/select.png">
+        <label for="editable-mode">Режим выбора произвольной области</label>
       </div>
-      <div class="scale">
-        <img src="./imgs/palitra.jpeg" alt="palitra">
+      <div>
+        <input id="kml-mode" type="image" alt="kml icon" src="./imgs/kml-img.png">
+        <label for="kml-mode">Режим выбора kml</label>
       </div>
+    </div>
+    <div class="layers">
+      <button class="layers__title">Слои карт</button>
+      <div hidden class="layers__list">
+        <h4>Отображаемые области:</h4>
+      </div>
+    </div>
+  </section>
+  <section id="message-window">
+    <p></p>
+  </section>
+  <section class="menu">
+    <input type="image" src="./imgs/down-arrow.png" class="down-arrow" alt="arrow"/>
+    <section hidden class="menu__content">
+      <ul class="menu__about">
+        <li class="about__project">dasdad</li>
+        <li class="about__region"> adada</li>
+        <li class="about__other">adad</li>
+      </ul>
     </section>
-  </main>
+  </section>
+  <section id="heatmap-scale">
+    <div class="signature">
+      <b>...</b>
+      <b>...</b>
+      <b>...</b>
+    </div>
+    <div class="scale">
+      <img src="./imgs/palitra.jpeg" alt="palitra">
+    </div>
+  </section>
+</main>
 </body>
 
 </html>
