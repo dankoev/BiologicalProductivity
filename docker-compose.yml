@@ -1,6 +1,7 @@
 services:
   mysql-bio-db:
     image: mysql
+    container_name: bio-db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: bio_db
@@ -17,13 +18,27 @@ services:
       PMA_HOST: mysql-bio-db
       PMA_PORT: 3306
       PMA_ARBITRARY: 1
-    restart: always
     ports:
       - 8081:80
+  backend:
+    build: .
+    container_name: back
+    links:
+      - mysql-bio-db
+    environment: 
+      MYSQL_HOST: mysql-bio-db
+    ports:
+      - 8080:8080
+    depends_on:
+      - mysql-bio-db 
+    volumes:
+      - ./maps:/home/app/maps
   nginx:
     image: nginx
+    links:
+      - backend
     ports:
       - 80:80
     volumes:
-      - ./frontend/dist:/var/www/bio-app/static
+      - ./frontend/dist:/var/www/bp
       - ./nginx-config.d:/etc/nginx/conf.d

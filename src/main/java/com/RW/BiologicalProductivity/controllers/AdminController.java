@@ -7,14 +7,18 @@ import com.RW.BiologicalProductivity.services.MapService.Deployment.MapUploadSer
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
 
 @Controller
-@RequestMapping("/bp-app/admin")
+@RequestMapping("/api/admin")
 public class AdminController {
     @Autowired
     RegionService regionService;
@@ -27,21 +31,17 @@ public class AdminController {
     }
     
     @PostMapping(value="/checkMapDir")
-    public ResponseEntity checkMapDir() {
+    public ModelAndView checkMapDir(ModelMap model) {
         System.out.println("START: uploadServiceTest");
         try{
             MapUploadService m = new MapUploadService(regionService);
             m.checkMapsDirectory();
         }catch (IOException | DataBaseException e){
             System.err.println(e.getMessage());
-            return ResponseEntity.status(303)
-                    .header("Location", "/admin")
-                    .body(e.getMessage());
+            model.addAttribute("error", e.getMessage());
+            return new ModelAndView("redirect:/api/admin", model);
         }
-        return ResponseEntity
-                .status(303)
-                .header("Location", "/")
-                .body("");
+        return new ModelAndView("redirect:/");
     }
     
 }

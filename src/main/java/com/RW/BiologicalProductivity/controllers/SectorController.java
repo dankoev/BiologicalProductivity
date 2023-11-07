@@ -19,7 +19,7 @@ import java.time.Instant;
 
 
 @RestController
-@RequestMapping("/bp-app")
+@RequestMapping("/api")
 public class SectorController {
     static{
         nu.pattern.OpenCV.loadLocally();
