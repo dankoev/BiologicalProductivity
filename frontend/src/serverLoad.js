@@ -1,8 +1,9 @@
 import { GeneralError, ServerError } from "./share"
 import { addPolyToMap, createHeatmapContainer } from "./ymapsControl"
+import { BP_API_PATH } from "../apiConfig.js"
 
 async function requestForBpServer(method, URL, postParams) {
-  return fetch(`/bp-app/${URL}`, {
+  return fetch(`${BP_API_PATH}/${URL}`, {
     method,
     ...postParams
   })

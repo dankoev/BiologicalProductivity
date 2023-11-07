@@ -1,4 +1,7 @@
-const pathToMapsInfo = "/data/interfaceInfo.json"
+import { GeneralError } from "./share";
+import { BP_CONTEXT } from "../apiConfig.js"
+
+const pathToMapsInfo = BP_CONTEXT + "/data/interfaceInfo.json"
 
 async function fetchMapsInfo() {
   return fetch(pathToMapsInfo, {

@@ -1,13 +1,14 @@
 {
   "name": "frontend",
   "version": "1.0.0",
+  "type": "module",
   "description": "frontend for Biological Productivity app ",
   "main": "main.js",
   "scripts": {
     "start_server": "docker compose -f ../docker-compose.yml up -d nginx",
     "stop_server": "docker compose -f ../docker-compose.yml down",
     "dev": "webpack --mode development",
-    "release": "webpack --mode production"
+    "release": "node ./src/temp/updaterMapInfo.js && NODE_ENV=production  webpack --mode production"
   },
   "author": "Anigirka",
   "license": "ISC",

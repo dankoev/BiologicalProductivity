@@ -3,6 +3,7 @@ import {showMessage} from "./messageBar";
 import {GeneralError,} from "./share";
 import "./css/kmlWindow.css"
 import {addSelectedArea, setBoundsForMap,} from "./ymapsControl";
+import { BP_CONTEXT } from "../apiConfig.js"
 
 
 const kmlTemplate =
@@ -14,7 +15,7 @@ const kmlTemplate =
         <li><label class="kml-li__item"><input type="button" hidden></label></li>
       </template>`
 
-const pathToKmlAreasJSON = "/data/kmlAreas.json"
+const pathToKmlAreasJSON = BP_CONTEXT + "/data/kmlAreas.json"
 
 let loadAreaEvent = () => {
 }

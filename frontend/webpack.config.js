@@ -1,11 +1,14 @@
-const path = require('path')
-const HTMLWebpackPlug = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const {SourceMapDevToolPlugin} = require("webpack");
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+import * as path from "path"
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import  webpack  from "webpack";
+import CopyPlugin from "copy-webpack-plugin";
 
-module.exports = {
-  watch: true,
+const __dirname = path.resolve(".")
+const isProduction = process.env.NODE_ENV === 'production';
+
+export default {
+  watch: isProduction ? false: true,
   entry: {
     main: "./src/main.js"
   },
@@ -21,6 +24,9 @@ module.exports = {
       },
       {
         test: /\.m?js$/,
+        resolve: {
+          fullySpecified:false
+        },
         enforce: 'pre',
         use: ['source-map-loader'],
       }
@@ -31,14 +37,14 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   plugins: [
-    new HTMLWebpackPlug({
+    new HtmlWebpackPlugin({
       template: "./src/index.html"
     }),
     new MiniCssExtractPlugin(),
-    new SourceMapDevToolPlugin({
+    new webpack.SourceMapDevToolPlugin({
       filename: "[file].map"
     }),
-    new CopyWebpackPlugin({
+    new CopyPlugin({
       patterns: [
         {
           from: './src/data',
