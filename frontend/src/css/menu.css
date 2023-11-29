@@ -1,0 +1,18 @@
+.menu {
+  position: absolute;
+  background-color: white;
+  top: 0;
+  right: 300px;
+  width: 200px;
+  height: 30px;
+  overflow: hidden;
+  border-radius: 10px;
+  padding: 5px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
+}
+
+.menu.down-arrow:hover {
+  & ~ * {
+    height: auto;
+  }
+}

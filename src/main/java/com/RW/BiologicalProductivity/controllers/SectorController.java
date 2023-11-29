@@ -19,7 +19,7 @@ import java.time.Instant;
 
 
 @RestController
-@RequestMapping("/bp-app")
+@RequestMapping("/api")
 public class SectorController {
     static{
         nu.pattern.OpenCV.loadLocally();
@@ -47,25 +47,25 @@ public class SectorController {
     public ResponseEntity<Object> getHeatMapOfSector(@RequestBody SectorRequest sectorRequest) {
         try {
             Instant start = Instant.now();
-            double[][] sectorCoords = sectorRequest.getSectorCoords();
-            double[][] areaCoords = sectorRequest.getAreaCoords();
+            double[][] areaBounds = sectorRequest.getBounds();
+            double[][] areaCoords = sectorRequest.getCoords();
             String type = sectorRequest.getType();
     
-            if(sectorCoords == null) {
+            if( areaBounds == null) {
                 return ResponseEntity.badRequest()
-                        .body("Not exist coordinates");
+                        .body("Bounds of area don't provided");
             }
             if(type == null) {
                 return ResponseEntity.badRequest()
-                        .body("Not exist map type ");
+                        .body("Map type don't provided");
             }
             
-            mapApi.detectRegion(sectorCoords);
+            mapApi.detectRegion(areaBounds);
             byte[] data;
             if (areaCoords != null) {
-                data = mapApi.getSectorAsBytes(sectorCoords, areaCoords, TypeMap.getTypeByName(type));
+                data = mapApi.getSectorAsBytes(areaBounds, areaCoords, TypeMap.getTypeByName(type));
             } else {
-                data = mapApi.getSectorAsBytes(sectorCoords, TypeMap.getTypeByName(type));
+                data = mapApi.getSectorAsBytes(areaBounds, TypeMap.getTypeByName(type));
             }
     
             Instant finish = Instant.now();

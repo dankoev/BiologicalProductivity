@@ -3,7 +3,6 @@ src/main/resources/static/index_copy.html
 target/
 maps/
 mysql/
-nginx-config.d/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -19,6 +18,7 @@ nginx-config.d/
 
 ### IntelliJ IDEA ###
 .idea
+.fleet
 *.iws
 *.iml
 *.ipr
