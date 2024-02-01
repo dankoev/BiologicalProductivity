@@ -10,9 +10,13 @@ import com.RW.BiologicalProductivity.services.MapService.MapSector;
 import com.RW.BiologicalProductivity.services.MapService.enums.TypeMap;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.function.ServerRequest;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -29,22 +33,10 @@ public class SectorController {
     RegionService regionService;
     @Autowired
     MapInfoService mapInfoService;
-    @Autowired
-    MapApiImpl mapApi;
-    
-    
-    @GetMapping(value = "/getLastSectorStatistics")
-    public ResponseEntity<byte[]> getLastSectorStatistics(){
-        MapSector curSector = mapApi.getCurrentSector();
-        SectorStatisticsResponse info = new SectorStatisticsResponse(curSector);
-        Gson gson = new Gson();
-        byte[] data = gson.toJson(info, SectorStatisticsResponse.class).getBytes();
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(data);
-    }
+
     @PostMapping("/getHeatMapOfSector")
     public ResponseEntity<Object> getHeatMapOfSector(@RequestBody SectorRequest sectorRequest) {
+        System.out.println(sectorRequest.getType());
         try {
             Instant start = Instant.now();
             double[][] areaBounds = sectorRequest.getBounds();
@@ -59,7 +51,7 @@ public class SectorController {
                 return ResponseEntity.badRequest()
                         .body("Map type don't provided");
             }
-            
+            MapApiImpl mapApi = new MapApiImpl(regionService);
             mapApi.detectRegion(areaBounds);
             byte[] data;
             if (areaCoords != null) {
@@ -71,9 +63,13 @@ public class SectorController {
             Instant finish = Instant.now();
             long elapsed = Duration.between(start, finish).toMillis();
             System.out.println("Общее время, мс: " + elapsed);
-    
-            return ResponseEntity.ok()
+
+            HttpHeaders headers = getHttpHeaders(mapApi);
+
+            return ResponseEntity
+                    .ok()
                     .contentType(MediaType.IMAGE_JPEG)
+                    .headers(headers)
                     .body(data);
             
         } catch (Exception e){
@@ -81,5 +77,15 @@ public class SectorController {
                     .body(e.getMessage());
         }
         
+    }
+
+    private static HttpHeaders getHttpHeaders(MapApiImpl mapApi) {
+        MapSector curSector = mapApi.getCurrentSector();
+        SectorStatisticsResponse info = new SectorStatisticsResponse(curSector);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("info_heatmap_max", info.getMaxSectorValue());
+        headers.set("info_heatmap_min", info.getMinSectorValue());
+        headers.set("info_heatmap_avg", info.getAverageSectorValue());
+        return headers;
     }
 }
