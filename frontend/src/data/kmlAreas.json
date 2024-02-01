@@ -1,10 +1,14 @@
 [
   {
     "name": "р.Ия - г.Тулун",
-    "link": "http://bp.imces.ru/data/kmls/tulun.kml"
+    "link": "http://bp.imces.ru/data/kmls/Iya.kml"
   },
   {
     "name": "p.Баргузин - п.Баргузин",
-    "link": "http://bp.imces.ru/data/kmls/barguzin.kml"
+    "link": "http://bp.imces.ru/data/kmls/Barguzin.kml"
+  },
+  {
+    "name": "р.Уда - с. Удинск",
+    "link": "http://bp.imces.ru/data/kmls/Uda.kml"
   }
 ]

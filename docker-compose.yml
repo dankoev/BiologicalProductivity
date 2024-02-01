@@ -25,15 +25,15 @@ services:
     container_name: back
     links:
       - mysql-bio-db
-    environment: 
+    environment:
       MYSQL_HOST: mysql-bio-db
     depends_on:
-      - mysql-bio-db 
+      - mysql-bio-db
     volumes:
       - ./maps:/home/app/maps
   front:
     build: ./frontend
-    environment: 
+    environment:
       API_HOST: backend
       API_PORT: 8080
     links:

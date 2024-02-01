@@ -1,69 +1,66 @@
-import { GeneralError, ServerError } from "./share"
-import { addPolyToMap, createHeatmapContainer } from "./ymapsControl"
-import { BP_API_PATH } from "../apiConfig.js"
+import { BP_API_PATH } from "../apiConfig";
+import { GeneralError, ServerError } from "./share";
+import { addPolyToMap, createHeatmapContainer } from "./ymapsControl";
 
 async function requestForBpServer(method, URL, postParams) {
   return fetch(`${BP_API_PATH}/${URL}`, {
     method,
-    ...postParams
+    ...postParams,
   })
-    .then(response => {
+    .then((response) => {
       if (response.ok) {
-        return response
+        return response;
       }
       if (response.status === 502) {
-        throw new GeneralError("Server don't work")
+        throw new GeneralError("Server don't work");
       }
-      return response.text()
-        .then(text => {
-          throw new GeneralError(text)
-        })
+      return response.text().then((text) => {
+        throw new GeneralError(text);
+      });
     })
-    .catch(err => {
-      throw new ServerError(`Server error: ${err.message}`)
-    })
-}
-async function getLastSectorStatistics() {
-  return requestForBpServer('GET', 'getLastSectorStatistics')
-    .then(data => data.json())
-    .then(jsonResponse => jsonResponse)
-    .catch(_ => new GeneralError("Getting statistics from server error"))
+    .catch((err) => {
+      throw new ServerError(`Server error: ${err.message}`);
+    });
 }
 export async function getHeatmapFromServer(areaInfoWithType) {
-  return await requestForBpServer('POST', 'getHeatMapOfSector', {
+  return await requestForBpServer("POST", "getHeatMapOfSector", {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(areaInfoWithType)
+    body: JSON.stringify(areaInfoWithType),
   })
-    .then(data => data.blob())
-    .then(heatmapBlob => {
+    .then(async (data) => [await data.blob(), data.headers])
+    .then(([heatmapBlob, headers]) => {
       return {
         getBlob: () => heatmapBlob,
-        createPolyFromHeatMap: () => createPolyFromHeatMap(heatmapBlob, areaInfoWithType)
-      }
+        createPolyFromHeatMap: () =>
+          createPolyFromHeatMap(heatmapBlob, areaInfoWithType, headers),
+      };
     })
-    .catch(err => {
+    .catch((err) => {
       if (err instanceof ServerError) {
-        throw err
+        throw err;
       }
-      throw new GeneralError("Server data corrupted")
-    })
-
+      throw new GeneralError("Server data corrupted");
+    });
 }
-async function createPolyFromHeatMap(heatmapBlob, areaInfoWithType) {
-  const { type, bounds, coords } = areaInfoWithType
-  const blobURL = URL.createObjectURL(heatmapBlob)
-  const container = createHeatmapContainer(bounds, type, coords, blobURL)
+async function createPolyFromHeatMap(heatmapBlob, areaInfoWithType, headers) {
+  const { type, bounds, coords } = areaInfoWithType;
+  const blobURL = URL.createObjectURL(heatmapBlob);
+  const container = createHeatmapContainer(bounds, type, coords, blobURL);
+  const areaStatistics = [...headers.entries()]
+    .filter(([key, _]) => key.slice(0, 4) == "info")
+    .reduce((acc, [infoKey, infoVal]) => {
+      acc[infoKey] = infoVal;
+      return acc;
+    }, {});
+
   return {
     getPoly: () => container,
     addToMap: () => addPolyToMap(container),
     addToMapWithStatistic: () => {
-      addPolyToMap(container)
-      getLastSectorStatistics()
-        .then(data => {
-          container.properties.set({ areaStatistics: data })
-        })
-    }
-  }
+      addPolyToMap(container);
+      container.properties.set({ areaStatistics });
+    },
+  };
 }
